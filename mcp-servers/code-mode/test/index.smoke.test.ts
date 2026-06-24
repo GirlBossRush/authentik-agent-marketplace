@@ -17,6 +17,7 @@ test("server starts, serves schema, and responds to tools/list over stdio", asyn
             JSON.stringify({ openapi: "3.0.3", paths: {}, components: {} }),
         );
     });
+
     await new Promise<void>((r) => inst.listen(0, () => r()));
 
     const { port } = inst.address() as AddressInfo;

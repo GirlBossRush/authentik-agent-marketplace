@@ -16,5 +16,6 @@
         "identity-provider",
         "contributing",
         "development"
-    ]
+    ],
+    "dependencies": ["admin"]
 }
