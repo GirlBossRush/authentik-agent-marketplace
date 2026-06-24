@@ -9,7 +9,7 @@ import { agentEnvPathBuilder } from "./paths.ts";
  * @param envFilePath The path to the `.env` file to load
  * @throws {Error} If the file exists but cannot be parsed
  */
-export function tryLoadEnvFile(envFilePath: string) {
+export function tryLoadEnvFile(envFilePath: string): NodeJS.Dict<string> {
     if (existsSync(envFilePath)) {
         console.error(`Loading environment from ${envFilePath}`);
 
@@ -24,6 +24,8 @@ export function tryLoadEnvFile(envFilePath: string) {
             );
         }
     }
+
+    return {};
 }
 
 /**
