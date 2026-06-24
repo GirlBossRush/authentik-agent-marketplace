@@ -2,13 +2,15 @@
 
 import { createHash } from "node:crypto";
 
+import type { OpenAPIV3 } from "openapi-types";
+
 import { createAk } from "./client.ts";
 import type { AKConfig } from "./config.ts";
 import { runInSandbox, type SandboxResult } from "./sandbox.ts";
 import { searchOperations, type OperationHit } from "./schema.ts";
 
 export interface CreateToolsDeps {
-  spec: any;
+  spec: OpenAPIV3.Document;
   config: AKConfig;
 }
 
