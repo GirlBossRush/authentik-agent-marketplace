@@ -31,7 +31,7 @@ test("PIVOT: discover + create a captcha stage in one confirmed write block", as
         const { port } = inst.address() as AddressInfo;
         const tools = createTools({
             spec: SPEC,
-            config: { baseUrl: `http://127.0.0.1:${port}`, token: "t" },
+            config: { baseURL: `http://127.0.0.1:${port}`, token: "t" },
         });
 
         // 1. The agent discovers the endpoint.

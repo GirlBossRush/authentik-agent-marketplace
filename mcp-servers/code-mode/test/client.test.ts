@@ -8,7 +8,7 @@ import { createAk } from "#client";
 /** Spin up a throwaway HTTP server and run `fn` against its base URL. */
 async function withMock<T>(
     handler: RequestListener,
-    fn: (baseUrl: string) => Promise<T>,
+    fn: (baseURL: string) => Promise<T>,
 ): Promise<T> {
     const server = createServer(handler);
     await new Promise<void>((r) => server.listen(0, () => r()));
@@ -28,9 +28,9 @@ test("request performs an authenticated GET and parses JSON", async () => {
             res.setHeader("content-type", "application/json");
             res.end(JSON.stringify({ ok: true }));
         },
-        async (baseUrl) => {
+        async (baseURL) => {
             const ak = createAk(
-                { baseUrl, token: "tok" },
+                { baseURL, token: "tok" },
                 { allowWrites: false },
             );
             const out = await ak.request("GET", "/core/users/", {
@@ -44,7 +44,7 @@ test("request performs an authenticated GET and parses JSON", async () => {
 
 test("read-only client rejects a write before any network call", async () => {
     const ak = createAk(
-        { baseUrl: "http://127.0.0.1:1", token: "tok" },
+        { baseURL: "http://127.0.0.1:1", token: "tok" },
         { allowWrites: false },
     );
     await assert.rejects(
@@ -66,9 +66,9 @@ test("write-enabled client sends a POST body", async () => {
                 res.end(JSON.stringify({ pk: 1 }));
             });
         },
-        async (baseUrl) => {
+        async (baseURL) => {
             const ak = createAk(
-                { baseUrl, token: "tok" },
+                { baseURL, token: "tok" },
                 { allowWrites: true },
             );
             const out = await ak.request("POST", "/stages/captcha/", {

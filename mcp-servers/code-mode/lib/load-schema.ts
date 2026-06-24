@@ -10,7 +10,7 @@ import { derefSchema } from "./schema.ts";
 export async function fetchSchema(
     config: AKConfig,
 ): Promise<OpenAPIV3.Document> {
-    const url = `${config.baseUrl}/api/v3/schema/`;
+    const url = `${config.baseURL}/api/v3/schema/`;
     const res = await fetch(url, {
         headers: {
             authorization: `Bearer ${config.token}`,

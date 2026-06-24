@@ -32,7 +32,7 @@ test("fetchSchema GETs /api/v3/schema/ and returns a deref'd spec", async () => 
     try {
         const { port } = server.address() as AddressInfo;
         const spec = await fetchSchema({
-            baseUrl: `http://127.0.0.1:${port}`,
+            baseURL: `http://127.0.0.1:${port}`,
             token: "t",
         });
         assert.equal(

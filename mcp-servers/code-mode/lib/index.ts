@@ -7,7 +7,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z, type ZodRawShape } from "zod";
 
 import { loadConfig } from "./config.ts";
-import { resolveDocsUrl, resolveIntegrationsUrl } from "./docs-url.ts";
+import { resolveDocsURL, resolveIntegrationsURL } from "./docs-url.ts";
 import { fetchSchema } from "./load-schema.ts";
 import { createTools } from "./tools.ts";
 import { SERVER_NAME, SERVER_VERSION } from "./version.ts";
@@ -38,8 +38,8 @@ async function main(): Promise<void> {
     // Version-aware docs URLs for THIS instance (env override → derive from
     // version → next.goauthentik.io).
     const version = spec.info?.version;
-    const docsUrl = resolveDocsUrl(process.env, version);
-    const integrationsUrl = resolveIntegrationsUrl(process.env);
+    const docsURL = resolveDocsURL(process.env, version);
+    const integrationsURL = resolveIntegrationsURL(process.env);
 
     const server = new McpServer({
         name: SERVER_NAME,
@@ -71,21 +71,21 @@ async function main(): Promise<void> {
 
     tool<Record<string, never>>(
         "docs",
-        "Return the authentik documentation base URLs for THIS instance (version-aware). Prefer these over any hardcoded docs URL: fetch `<docsUrl>/llms.txt` (or `<integrationsUrl>/llms.txt`), follow the index to the relevant page, then fetch its `.md`.",
+        "Return the authentik documentation base URLs for THIS instance (version-aware). Prefer these over any hardcoded docs URL: fetch `<docsURL>/llms.txt` (or `<integrationsURL>/llms.txt`), follow the index to the relevant page, then fetch its `.md`.",
         {},
         async () =>
             asContent({
-                docsUrl,
-                integrationsUrl,
-                docsLlmsTxt: `${docsUrl}/llms.txt`,
-                integrationsLlmsTxt: `${integrationsUrl}/llms.txt`,
+                docsURL,
+                integrationsURL,
+                docsLlmsTxt: `${docsURL}/llms.txt`,
+                integrationsLlmsTxt: `${integrationsURL}/llms.txt`,
                 version: version ?? null,
             }),
     );
 
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error(`${SERVER_NAME} ${SERVER_VERSION} ready (${config.baseUrl})`);
+    console.error(`${SERVER_NAME} ${SERVER_VERSION} ready (${config.baseURL})`);
 }
 
 main().catch((err) => {

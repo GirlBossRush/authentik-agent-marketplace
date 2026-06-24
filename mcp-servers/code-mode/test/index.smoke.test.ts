@@ -21,10 +21,10 @@ test("server starts, serves schema, and responds to tools/list over stdio", asyn
     await new Promise<void>((r) => inst.listen(0, () => r()));
 
     const { port } = inst.address() as AddressInfo;
-    const baseUrl = `http://127.0.0.1:${port}`;
+    const baseURL = `http://127.0.0.1:${port}`;
 
     const child = spawn("node", [ENTRY], {
-        env: { ...process.env, AUTHENTIK_URL: baseUrl, AUTHENTIK_TOKEN: "t" },
+        env: { ...process.env, AUTHENTIK_URL: baseURL, AUTHENTIK_TOKEN: "t" },
         stdio: ["pipe", "pipe", "pipe"],
     });
 

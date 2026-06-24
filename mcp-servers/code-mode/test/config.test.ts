@@ -8,7 +8,7 @@ test("loadConfig reads and normalizes env", () => {
         AUTHENTIK_URL: "https://id.example.com/",
         AUTHENTIK_TOKEN: "ak-tok",
     });
-    assert.equal(cfg.baseUrl, "https://id.example.com");
+    assert.equal(cfg.baseURL, "https://id.example.com");
     assert.equal(cfg.token, "ak-tok");
 });
 

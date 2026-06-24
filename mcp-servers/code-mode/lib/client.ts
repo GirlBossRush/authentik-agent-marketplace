@@ -37,7 +37,7 @@ export function createAk(
                 `writes are disabled in this context; use execute_write (attempted ${verb} ${path})`,
             );
         }
-        const url = new URL(`${config.baseUrl}/api/v3${path}`);
+        const url = new URL(`${config.baseURL}/api/v3${path}`);
         for (const [k, v] of Object.entries(opts.query ?? {})) {
             url.searchParams.set(k, String(v));
         }

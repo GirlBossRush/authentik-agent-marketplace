@@ -8,18 +8,18 @@
 
 import { parseEnvironment } from "./lib/parse.ts";
 import {
-    resolveDocsUrlFromEnv,
-    resolveIntegrationsUrl,
+    resolveDocsURLFromEnv,
+    resolveIntegrationsURL,
 } from "./lib/resolve.ts";
 
 const env = parseEnvironment();
-const docsUrl = resolveDocsUrlFromEnv(env);
-const integrationsUrl = resolveIntegrationsUrl(env);
+const docsURL = resolveDocsURLFromEnv(env);
+const integrationsURL = resolveIntegrationsURL(env);
 
 const additionalContext = [
-    `authentik docs base URL: ${docsUrl}`,
-    `authentik integrations base URL: ${integrationsUrl}`,
-    `For authentik documentation, start at ${docsUrl}/llms.txt (integrations: ${integrationsUrl}/llms.txt),`,
+    `authentik docs base URL: ${docsURL}`,
+    `authentik integrations base URL: ${integrationsURL}`,
+    `For authentik documentation, start at ${docsURL}/llms.txt (integrations: ${integrationsURL}/llms.txt),`,
     `follow the index to the relevant page, and fetch its .md. When an instance is configured, the`,
     `authentik-code-mode MCP's "docs" tool returns the version-accurate docs base URL.`,
 ].join(" ");

@@ -1,10 +1,16 @@
 /** @file Resolve the authentik docs base URL for the configured instance. */
 
-/** Stable-release docs (current). */
+/**
+ * Stable-release docs (current).
+ */
 export const DOCS_CURRENT_ORIGIN = "https://docs.goauthentik.io";
-/** Pre-release / next docs — and the default when no version or override is known. */
+/**
+ * Pre-release / next docs — and the default when no version or override is known.
+ */
 export const DOCS_NEXT_ORIGIN = "https://next.goauthentik.io";
-/** Integrations docs — single, unversioned. */
+/**
+ * Integrations docs — single, unversioned.
+ */
 export const INTEGRATIONS_ORIGIN = "https://integrations.goauthentik.io";
 
 /** Trim trailing slashes; treat empty/whitespace as unset. */
@@ -13,7 +19,9 @@ function normalizeOrigin(value: string | undefined): string | undefined {
     return trimmed ? trimmed.replace(/\/+$/, "") : undefined;
 }
 
-/** A version string carries a prerelease tag (e.g. "2026.8.0-rc1" → true). */
+/**
+ * A version string carries a prerelease tag (e.g. "2026.8.0-rc1" → true).
+ */
 export function isPrerelease(version: string): boolean {
     return version.includes("-");
 }
@@ -23,7 +31,7 @@ export function isPrerelease(version: string): boolean {
  * (instance version: prerelease → `PRE_RELEASE_ORIGIN`/next; stable →
  * `CURRENT_RELEASE_ORIGIN`/docs) → next.goauthentik.io.
  */
-export function resolveDocsUrl(
+export function resolveDocsURL(
     env: Record<string, string | undefined>,
     version?: string,
 ): string {
@@ -41,7 +49,7 @@ export function resolveDocsUrl(
 }
 
 /** Resolve the (single, unversioned) integrations base URL. */
-export function resolveIntegrationsUrl(
+export function resolveIntegrationsURL(
     env: Record<string, string | undefined>,
 ): string {
     return (

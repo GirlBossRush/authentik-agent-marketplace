@@ -18,7 +18,7 @@ const SPEC = derefSchema(
 
 async function withMock<T>(
     handler: RequestListener,
-    fn: (baseUrl: string) => Promise<T>,
+    fn: (baseURL: string) => Promise<T>,
 ): Promise<T> {
     const server = createServer(handler);
     await new Promise<void>((r) => server.listen(0, () => r()));
@@ -33,7 +33,7 @@ async function withMock<T>(
 test("search returns matching operations", () => {
     const tools = createTools({
         spec: SPEC,
-        config: { baseUrl: "http://x", token: "t" },
+        config: { baseURL: "http://x", token: "t" },
     });
     const { operations } = tools.search({ query: "list users" });
     assert.ok(operations.some((o) => o.operationId === "core_users_list"));
@@ -42,10 +42,10 @@ test("search returns matching operations", () => {
 test("execute runs read-only code", async () => {
     await withMock(
         (_req, res) => res.end(JSON.stringify([{ username: "alice" }])),
-        async (baseUrl) => {
+        async (baseURL) => {
             const tools = createTools({
                 spec: SPEC,
-                config: { baseUrl, token: "t" },
+                config: { baseURL: baseURL, token: "t" },
             });
             const { result } = await tools.execute({
                 code: `return (await ak.request("GET","/core/users/")).data;`,
@@ -58,7 +58,7 @@ test("execute runs read-only code", async () => {
 test("execute blocks writes (read-only binding)", async () => {
     const tools = createTools({
         spec: SPEC,
-        config: { baseUrl: "http://127.0.0.1:1", token: "t" },
+        config: { baseURL: "http://127.0.0.1:1", token: "t" },
     });
     await assert.rejects(
         () =>
@@ -75,10 +75,10 @@ test("execute_write requires a matching confirm token, then runs", async () => {
             res.statusCode = 201;
             res.end(JSON.stringify({ pk: 7 }));
         },
-        async (baseUrl) => {
+        async (baseURL) => {
             const tools = createTools({
                 spec: SPEC,
-                config: { baseUrl, token: "t" },
+                config: { baseURL: baseURL, token: "t" },
             });
             const code = `return (await ak.request("POST","/stages/captcha/",{body:{name:"c"}})).data;`;
             const first = await tools.executeWrite({ code });
@@ -98,7 +98,7 @@ test("execute_write requires a matching confirm token, then runs", async () => {
 test("execute_write rejects a wrong confirm token without running", async () => {
     const tools = createTools({
         spec: SPEC,
-        config: { baseUrl: "http://127.0.0.1:1", token: "t" },
+        config: { baseURL: "http://127.0.0.1:1", token: "t" },
     });
     const code = `return await ak.request("POST","/stages/captcha/",{body:{}});`;
     const out = await tools.executeWrite({ code, confirm: "wrongtok" });

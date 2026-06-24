@@ -1,10 +1,16 @@
 /** @file Resolve the authentik docs + integrations base URLs from configuration. */
 
-/** Stable-release docs (current). */
+/**
+ * Stable-release docs (current).
+ */
 export const DOCS_CURRENT_ORIGIN = "https://docs.goauthentik.io";
-/** Pre-release / next docs — and the default when no version or override is known. */
+/**
+ * Pre-release / next docs — and the default when no version or override is known.
+ */
 export const DOCS_NEXT_ORIGIN = "https://next.goauthentik.io";
-/** Integrations docs — single, unversioned. */
+/**
+ * Integrations docs — single, unversioned.
+ */
 export const INTEGRATIONS_ORIGIN = "https://integrations.goauthentik.io";
 
 /** Trim trailing slashes; treat empty/whitespace as unset. */
@@ -23,7 +29,7 @@ export function isPrerelease(version: string): boolean {
  * Precedence: AK_AGENT_DOCS_URL → AK_DOCS_URL → next.goauthentik.io.
  * Used by the offline SessionStart hook.
  */
-export function resolveDocsUrlFromEnv(
+export function resolveDocsURLFromEnv(
     env: Record<string, string | undefined>,
 ): string {
     return (
@@ -39,7 +45,7 @@ export function resolveDocsUrlFromEnv(
  * prerelease → PRE_RELEASE_ORIGIN/next; stable → CURRENT_RELEASE_ORIGIN/docs) →
  * next.goauthentik.io. Used by the code-mode MCP, which knows the instance version.
  */
-export function resolveDocsUrl(
+export function resolveDocsURL(
     env: Record<string, string | undefined>,
     version?: string,
 ): string {
@@ -57,7 +63,7 @@ export function resolveDocsUrl(
 }
 
 /** Resolve the (single, unversioned) integrations base URL. */
-export function resolveIntegrationsUrl(
+export function resolveIntegrationsURL(
     env: Record<string, string | undefined>,
 ): string {
     return (
