@@ -52,6 +52,7 @@ test("server starts, serves schema, and responds to tools/list over stdio", asyn
 
         assert.match(out, /"search"/);
         assert.match(out, /"execute_write"/);
+        assert.match(out, /"docs"/);
     } finally {
         child.kill();
         inst.close();

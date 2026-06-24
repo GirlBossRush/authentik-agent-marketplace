@@ -7,6 +7,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z, type ZodRawShape } from "zod";
 
 import { loadConfig } from "./config.ts";
+import { resolveDocsUrl, resolveIntegrationsUrl } from "./docs-url.ts";
 import { fetchSchema } from "./load-schema.ts";
 import { createTools } from "./tools.ts";
 import { SERVER_NAME, SERVER_VERSION } from "./version.ts";
@@ -34,6 +35,12 @@ async function main(): Promise<void> {
     const spec = await fetchSchema(config);
     const tools = createTools({ spec, config });
 
+    // Version-aware docs URLs for THIS instance (env override → derive from
+    // version → next.goauthentik.io).
+    const version = spec.info?.version;
+    const docsUrl = resolveDocsUrl(process.env, version);
+    const integrationsUrl = resolveIntegrationsUrl(process.env);
+
     const server = new McpServer({
         name: SERVER_NAME,
         version: SERVER_VERSION,
@@ -60,6 +67,20 @@ async function main(): Promise<void> {
         "Run JavaScript with a WRITE-ENABLED `ak.request(...)` client. Two-step: call once with { code } to receive a confirm token + preview, then call again with { code, confirm } (same code) to run it. Reads and writes may be mixed in one block.",
         { code: z.string(), confirm: z.string().optional() },
         async (args) => asContent(await tools.executeWrite(args)),
+    );
+
+    tool<Record<string, never>>(
+        "docs",
+        "Return the authentik documentation base URLs for THIS instance (version-aware). Prefer these over any hardcoded docs URL: fetch `<docsUrl>/llms.txt` (or `<integrationsUrl>/llms.txt`), follow the index to the relevant page, then fetch its `.md`.",
+        {},
+        async () =>
+            asContent({
+                docsUrl,
+                integrationsUrl,
+                docsLlmsTxt: `${docsUrl}/llms.txt`,
+                integrationsLlmsTxt: `${integrationsUrl}/llms.txt`,
+                version: version ?? null,
+            }),
     );
 
     const transport = new StdioServerTransport();

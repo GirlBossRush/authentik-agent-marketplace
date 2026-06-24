@@ -3,11 +3,17 @@
         "authentik-code-mode": {
             "command": "node",
             "args": [
-                "${CLAUDE_PLUGIN_ROOT}/mcp-servers/code-mode/src/index.ts"
+                "${CLAUDE_PLUGIN_ROOT}/mcp-servers/code-mode/lib/index.ts"
             ],
             "env": {
                 "AUTHENTIK_URL": "${AUTHENTIK_URL}",
-                "AUTHENTIK_TOKEN": "${AUTHENTIK_TOKEN}"
+                "AUTHENTIK_TOKEN": "${AUTHENTIK_TOKEN}",
+                "AK_AGENT_DOCS_URL": "${AK_AGENT_DOCS_URL}",
+                "AK_DOCS_URL": "${AK_DOCS_URL}",
+                "AK_AGENT_INTEGRATIONS_URL": "${AK_AGENT_INTEGRATIONS_URL}",
+                "AK_INTEGRATIONS_URL": "${AK_INTEGRATIONS_URL}",
+                "CURRENT_RELEASE_ORIGIN": "${CURRENT_RELEASE_ORIGIN}",
+                "PRE_RELEASE_ORIGIN": "${PRE_RELEASE_ORIGIN}"
             }
         }
     }

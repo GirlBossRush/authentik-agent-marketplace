@@ -6,7 +6,11 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "cd \"${CLAUDE_PLUGIN_ROOT}/mcp-servers/code-mode\" && npm install --omit=dev --no-audit --no-fund"
+                        "command": "cd \"${CLAUDE_PLUGIN_ROOT}/mcp-servers/code-mode\" && npm install --omit=dev --no-audit --no-fund --silent 1>&2 || true"
+                    },
+                    {
+                        "type": "command",
+                        "command": "node \"${CLAUDE_PLUGIN_ROOT}/plugins/admin/commands/environment/session-context.ts\""
                     }
                 ]
             }

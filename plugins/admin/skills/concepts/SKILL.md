@@ -34,7 +34,8 @@ the concept and wants to act, route to the specific skill that owns that object.
 
 ## Finding the docs
 
-authentik changes between releases — prefer the live docs over memory: start at
-<https://docs.goauthentik.io/llms.txt> (integrations live at
-<https://integrations.goauthentik.io/llms.txt>), follow the index to the right
-page, and fetch its `.md`.
+authentik changes between releases — prefer the live docs over memory: use the
+authentik docs base URL from your session context (or the `authentik-code-mode`
+MCP's `docs` tool, which returns the version-accurate URL), then fetch
+`<docs>/llms.txt` (integrations: `<integrations>/llms.txt`), follow the index to
+the right page, and fetch its `.md`.
