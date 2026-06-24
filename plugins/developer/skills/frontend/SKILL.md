@@ -1,11 +1,11 @@
 ---
 name: frontend
 description: >
-  Run and work on authentik's web frontend during development. Covers starting
-  the web dev server in watch mode, building the frontend bundles, and pointing
-  the running build at a local or remote backend. Use when a contributor wants to
-  run the frontend dev server, rebuild the web UI after changes, or troubleshoot
-  why their local UI changes aren't showing up.
+    Run and work on authentik's web frontend during development. Covers starting
+    the web dev server in watch mode, building the frontend bundles, and pointing
+    the running build at a local or remote backend. Use when a contributor wants to
+    run the frontend dev server, rebuild the web UI after changes, or troubleshoot
+    why their local UI changes aren't showing up.
 ---
 
 # authentik frontend development

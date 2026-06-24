@@ -3,3 +3,24 @@ TODO.md
 node_modules/
 out/
 *.tsbuildinfo
+
+### Agents ###
+
+AGENT.local.md
+AGENTS.local.md
+CLAUDE.local.md
+
+.agents/*.local.json
+.agents/scheduled_tasks.*
+.agents/worktree
+
+## Claude
+
+.claude/*.local.json
+.claude/scheduled_tasks.*
+.claude/worktree
+
+## Pi
+
+.pi
+.deps-stamp

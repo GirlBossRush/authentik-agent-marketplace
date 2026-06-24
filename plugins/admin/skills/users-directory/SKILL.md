@@ -1,12 +1,12 @@
 ---
 name: users-directory
 description: >
-  Manage users, groups, roles, and invitations in authentik's directory. Use
-  when a user wants to create or deactivate accounts, organize people into
-  groups, assign roles, set or reset another user's password, issue enrollment
-  invitations, or inspect a specific user's group membership and attributes.
-  Covers the user/group data itself; the permissions attached to roles live in
-  policies-rbac, and end-to-end login flows live in flows-stages.
+    Manage users, groups, roles, and invitations in authentik's directory. Use
+    when a user wants to create or deactivate accounts, organize people into
+    groups, assign roles, set or reset another user's password, issue enrollment
+    invitations, or inspect a specific user's group membership and attributes.
+    Covers the user/group data itself; the permissions attached to roles live in
+    policies-rbac, and end-to-end login flows live in flows-stages.
 ---
 
 # authentik users and directory

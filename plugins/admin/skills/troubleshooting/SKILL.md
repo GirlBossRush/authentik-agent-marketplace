@@ -1,12 +1,12 @@
 ---
 name: troubleshooting
 description: >
-  Diagnose a broken or degraded authentik instance. Covers email/SMTP delivery
-  failures, slow or unresponsive performance, worker and Celery task health,
-  Redis and PostgreSQL connectivity, the System Tasks view, and reading server
-  and worker logs to find a root cause. Use when something that should work
-  doesn't — emails not arriving, the UI is slow, a background task is stuck — and
-  the user needs a systematic diagnosis rather than a feature configuration.
+    Diagnose a broken or degraded authentik instance. Covers email/SMTP delivery
+    failures, slow or unresponsive performance, worker and Celery task health,
+    Redis and PostgreSQL connectivity, the System Tasks view, and reading server
+    and worker logs to find a root cause. Use when something that should work
+    doesn't — emails not arriving, the UI is slow, a background task is stuck — and
+    the user needs a systematic diagnosis rather than a feature configuration.
 ---
 
 # authentik troubleshooting

@@ -1,12 +1,12 @@
 ---
 name: events-monitoring
 description: >
-  Inspect authentik's event log and configure notifications. Covers the audit
-  and event stream (logins, login failures, configuration changes, system tasks),
-  querying and filtering it, and the notification rules plus transports (email,
-  webhook, generic webhook) that alert on matching events. Use when a user wants
-  to see what happened — recent failed or successful logins, who changed a setting
-  — or wants to be alerted when a specific kind of event occurs.
+    Inspect authentik's event log and configure notifications. Covers the audit
+    and event stream (logins, login failures, configuration changes, system tasks),
+    querying and filtering it, and the notification rules plus transports (email,
+    webhook, generic webhook) that alert on matching events. Use when a user wants
+    to see what happened — recent failed or successful logins, who changed a setting
+    — or wants to be alerted when a specific kind of event occurs.
 ---
 
 # authentik events and monitoring

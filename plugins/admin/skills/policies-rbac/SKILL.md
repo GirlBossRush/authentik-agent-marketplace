@@ -1,12 +1,12 @@
 ---
 name: policies-rbac
 description: >
-  Control authorization with Policies and role-based access control. Covers
-  expression, password, reputation, event-matcher, and GeoIP policies; how
-  policies bind to flows, stages, applications, and sources; and authentik's RBAC
-  with roles, global and object-level permissions. Use when a user wants to decide
-  who can access an application, gate a flow or stage on a condition, enforce
-  password rules, or delegate admin permissions to a role or group.
+    Control authorization with Policies and role-based access control. Covers
+    expression, password, reputation, event-matcher, and GeoIP policies; how
+    policies bind to flows, stages, applications, and sources; and authentik's RBAC
+    with roles, global and object-level permissions. Use when a user wants to decide
+    who can access an application, gate a flow or stage on a condition, enforce
+    password rules, or delegate admin permissions to a role or group.
 ---
 
 # authentik policies and RBAC

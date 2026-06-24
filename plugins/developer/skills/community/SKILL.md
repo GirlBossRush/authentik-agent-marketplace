@@ -1,12 +1,12 @@
 ---
 name: community
 description: >
-  Point a contributor or user to the right authentik community channel and help
-  them ask an effective question. Covers GitHub Discussions, the Discord server,
-  and other official support venues, plus which channel fits which kind of
-  question and what context to include. Use when someone wants to get help from
-  the community, ask a question that isn't a bug report, or find where to discuss
-  an idea before opening an issue.
+    Point a contributor or user to the right authentik community channel and help
+    them ask an effective question. Covers GitHub Discussions, the Discord server,
+    and other official support venues, plus which channel fits which kind of
+    question and what context to include. Use when someone wants to get help from
+    the community, ask a question that isn't a bug report, or find where to discuss
+    an idea before opening an issue.
 ---
 
 # authentik community and support

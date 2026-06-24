@@ -1,13 +1,13 @@
 ---
 name: flows-stages
 description: >
-  Design and modify Flows and the Stages bound to them — the step-by-step
-  sequences for authentication, enrollment, recovery, unenrollment, and
-  configuration. Use when a user wants to change what happens during login or
-  signup: add a captcha, combine username and password onto one page, add a
-  consent or email-verification step, build a self-service enrollment or password
-  recovery flow, or reorder stages. Covers stage and policy bindings and flow
-  execution order. MFA enrollment specifics live in authenticators-mfa.
+    Design and modify Flows and the Stages bound to them — the step-by-step
+    sequences for authentication, enrollment, recovery, unenrollment, and
+    configuration. Use when a user wants to change what happens during login or
+    signup: add a captcha, combine username and password onto one page, add a
+    consent or email-verification step, build a self-service enrollment or password
+    recovery flow, or reorder stages. Covers stage and policy bindings and flow
+    execution order. MFA enrollment specifics live in authenticators-mfa.
 ---
 
 # authentik flows and stages

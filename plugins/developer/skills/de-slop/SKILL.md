@@ -1,12 +1,12 @@
 ---
 name: de-slop
 description: >
-  Detect and remove "LLM smells" (AI-slop tells) from any text or document.
-  Use this whenever you are (a) generating prose, documentation, emails, posts,
-  marketing copy, READMEs, comments, or any human-facing text, or (b) asked to
-  review, edit, or critique a document. Workflow: draft normally, then audit the
-  draft against the checklists below, then rewrite to remove every flagged item.
-  The goal is output that does not read as machine-generated.
+    Detect and remove "LLM smells" (AI-slop tells) from any text or document.
+    Use this whenever you are (a) generating prose, documentation, emails, posts,
+    marketing copy, READMEs, comments, or any human-facing text, or (b) asked to
+    review, edit, or critique a document. Workflow: draft normally, then audit the
+    draft against the checklists below, then rewrite to remove every flagged item.
+    The goal is output that does not read as machine-generated.
 ---
 
 # De-Slop: Remove LLM Smells from Text

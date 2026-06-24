@@ -1,12 +1,12 @@
 ---
 name: linting
 description: >
-  Run authentik's linters, formatters, and type checkers across the Python
-  backend and the web frontend. Covers the lint and format commands, the type
-  checkers for both languages, applying autofixes, and matching what CI enforces
-  so a change passes checks before it is pushed. Use when a contributor wants to
-  run the linter, run the type checker, auto-format code, or resolve a failing
-  lint/type CI check.
+    Run authentik's linters, formatters, and type checkers across the Python
+    backend and the web frontend. Covers the lint and format commands, the type
+    checkers for both languages, applying autofixes, and matching what CI enforces
+    so a change passes checks before it is pushed. Use when a contributor wants to
+    run the linter, run the type checker, auto-format code, or resolve a failing
+    lint/type CI check.
 ---
 
 # authentik linting and type checking

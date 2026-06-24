@@ -1,12 +1,12 @@
 ---
 name: backend
 description: >
-  Run and work on authentik's Python/Django backend during development. Covers
-  starting the backend API server and the background worker, creating and
-  applying database migrations, and the common management commands a contributor
-  runs while changing backend code. Use when someone wants to run the backend dev
-  server, generate or apply migrations, or execute a Django management command
-  against their local instance.
+    Run and work on authentik's Python/Django backend during development. Covers
+    starting the backend API server and the background worker, creating and
+    applying database migrations, and the common management commands a contributor
+    runs while changing backend code. Use when someone wants to run the backend dev
+    server, generate or apply migrations, or execute a Django management command
+    against their local instance.
 ---
 
 # authentik backend development

@@ -1,0 +1,84 @@
+{
+    "[makefile]": {
+        "editor.minimap.markSectionHeaderRegex": "^#{25}\n##\\s\\s*(?<separator>-?)\\s*(?<label>[^\n]*)\n#{25}$"
+    },
+    "[dockerfile]": {
+        "editor.minimap.markSectionHeaderRegex": "\\bStage\\s*\\d:(?<separator>-?)\\s*(?<label>.*)$"
+    },
+    "[jsonc]": {
+        "editor.minimap.markSectionHeaderRegex": "#\\bregion\\s*(?<separator>-?)\\s*(?<label>.*)$"
+    },
+    "[xml]": {
+        "editor.minimap.markSectionHeaderRegex": "<!--\\s*#\\bregion\\s*(?<separator>-?)\\s*(?<label>.*)\\s*-->"
+    },
+    "[css]": {
+        "editor.minimap.markSectionHeaderRegex": "#\\bregion\\s*(?<separator>-?)\\s*(?<label>.*)\\*/$",
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[shellscript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[yaml]": {
+        "editor.autoIndent": "advanced",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2
+    },
+
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+
+    "eslint.useFlatConfig": true,
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "*.cjs": "*.d.cts",
+        ".node-version": ".nvmrc",
+        "package.json": "package-lock.json, yarn.lock, .yarnrc, .yarnrc.yml, .yarn, .nvmrc, .node-version",
+        "tsconfig.json": "tsconfig.*.json, jsconfig.json",
+        "AGENTS.md": "CLAUDE.md"
+    },
+    "files.exclude": {
+        ".editorconfig": true,
+        ".eslintignore": true,
+        ".eslintrc.cjs": true,
+        ".node-version": true,
+        ".yarnrc": true,
+        "scratch": true,
+        "out": true,
+        "paths.mjs": true,
+        "yarn.lock": true
+    },
+
+    "files.associations": {
+        // The built-in "ignore" language gives us enough syntax highlighting to make these files readable.
+        "**/dictionaries/*.txt": "ignore"
+    },
+    "yaml.format.printWidth": 200,
+    "yaml.format.singleQuote": true,
+    "yaml.format.bracketSpacing": false,
+    "js/ts.preferences.importModuleSpecifier": "non-relative",
+    "js/ts.preferences.importModuleSpecifierEnding": "index",
+    "js/ts.tsdk.path": "./node_modules/typescript/lib",
+    "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/playwright-report/**": true
+    }
+}

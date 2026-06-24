@@ -1,12 +1,12 @@
 ---
 name: authenticators-mfa
 description: >
-  Set up multi-factor authentication and authenticator devices. Covers TOTP
-  apps, WebAuthn and passkeys (including hardware keys like YubiKey), the
-  authentik mobile push authenticator, Duo, SMS, and static recovery codes —
-  plus enrolling these via authenticator stages and enforcing MFA with validation
-  stages and policies. Use when a user wants to require a second factor, let users
-  register a security key, or troubleshoot why MFA is or isn't being prompted.
+    Set up multi-factor authentication and authenticator devices. Covers TOTP
+    apps, WebAuthn and passkeys (including hardware keys like YubiKey), the
+    authentik mobile push authenticator, Duo, SMS, and static recovery codes —
+    plus enrolling these via authenticator stages and enforcing MFA with validation
+    stages and policies. Use when a user wants to require a second factor, let users
+    register a security key, or troubleshoot why MFA is or isn't being prompted.
 ---
 
 # authentik authenticators and MFA

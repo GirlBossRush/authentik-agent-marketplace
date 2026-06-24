@@ -1,13 +1,13 @@
 ---
 name: dev-environment
 description: >
-  Set up and maintain a local authentik development environment from a source
-  checkout. Covers prerequisites, installing backend (Python) and web
-  (Node/pnpm) dependencies, bringing up the supporting services (PostgreSQL and
-  Redis) via Docker Compose, generating local config, applying the initial
-  database migrations, and creating the first admin user. Use when a contributor
-  is starting from a fresh clone or their environment is broken and they need a
-  working dev stack before running servers or tests.
+    Set up and maintain a local authentik development environment from a source
+    checkout. Covers prerequisites, installing backend (Python) and web
+    (Node/pnpm) dependencies, bringing up the supporting services (PostgreSQL and
+    Redis) via Docker Compose, generating local config, applying the initial
+    database migrations, and creating the first admin user. Use when a contributor
+    is starting from a fresh clone or their environment is broken and they need a
+    working dev stack before running servers or tests.
 ---
 
 # authentik dev environment

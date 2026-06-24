@@ -1,13 +1,13 @@
 ---
 name: sources
 description: >
-  Configure Sources, where authentik trusts an external identity provider so
-  users can log in with an existing account. Covers social and federated login
-  (Google, GitHub, Apple, Discord, Microsoft Entra ID, Twitch, and other OAuth
-  sources), SAML and OIDC sources, LDAP and Active Directory directory sync,
-  Kerberos, SCIM inbound, and Plex. Use when a user wants "log in with X" on
-  their authentik login page or wants to import users from a directory. For
-  authentik *being* the IdP that apps trust, use providers.
+    Configure Sources, where authentik trusts an external identity provider so
+    users can log in with an existing account. Covers social and federated login
+    (Google, GitHub, Apple, Discord, Microsoft Entra ID, Twitch, and other OAuth
+    sources), SAML and OIDC sources, LDAP and Active Directory directory sync,
+    Kerberos, SCIM inbound, and Plex. Use when a user wants "log in with X" on
+    their authentik login page or wants to import users from a directory. For
+    authentik *being* the IdP that apps trust, use providers.
 ---
 
 # authentik sources

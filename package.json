@@ -1,83 +1,83 @@
 {
-  "name": "@goauthentik/agent-marketplace",
-  "version": "1.0.0",
-  "description": "Marketplace for agentic tooling",
-  "homepage": "https://github.com/goauthentik/agent-marketplace#readme",
-  "bugs": {
-    "url": "https://github.com/goauthentik/agent-marketplace/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/goauthentik/agent-marketplace.git"
-  },
-  "license": "MIT",
-  "author": "Authentik Security Inc.",
-  "type": "module",
-  "devDependencies": {
-    "@goauthentik/eslint-config": "^2.0.0",
-    "@goauthentik/prettier-config": "^3.5.0",
-    "@goauthentik/tsconfig": "^2.0.0",
-    "@types/node": "^26.0.0",
-    "eslint": "^9.39.4",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^3.8.3",
-    "prettier-plugin-packagejson": "^3.0.2",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.1"
-  },
-  "overrides": {
-    "@goauthentik/eslint-config": {
-      "typescript": "$typescript"
+    "name": "@goauthentik/agent-marketplace",
+    "version": "1.0.0",
+    "description": "Marketplace for agentic tooling",
+    "homepage": "https://github.com/goauthentik/agent-marketplace#readme",
+    "bugs": {
+        "url": "https://github.com/goauthentik/agent-marketplace/issues"
     },
-    "@goauthentik/prettier-config": {
-      "prettier": "$prettier",
-      "prettier-plugin-packagejson": "$prettier-plugin-packagejson"
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/goauthentik/agent-marketplace.git"
     },
-    "@typescript-eslint/parser": {
-      "typescript": "$typescript"
+    "license": "MIT",
+    "author": "Authentik Security Inc.",
+    "type": "module",
+    "devDependencies": {
+        "@goauthentik/eslint-config": "^2.0.0",
+        "@goauthentik/prettier-config": "^3.5.0",
+        "@goauthentik/tsconfig": "^2.0.0",
+        "@types/node": "^26.0.0",
+        "eslint": "^9.39.4",
+        "npm-run-all": "^4.1.5",
+        "prettier": "^3.8.3",
+        "prettier-plugin-packagejson": "^3.0.2",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.60.1"
     },
-    "@typescript-eslint/utils": {
-      "typescript": "$typescript"
+    "overrides": {
+        "@goauthentik/eslint-config": {
+            "typescript": "$typescript"
+        },
+        "@goauthentik/prettier-config": {
+            "prettier": "$prettier",
+            "prettier-plugin-packagejson": "$prettier-plugin-packagejson"
+        },
+        "@typescript-eslint/parser": {
+            "typescript": "$typescript"
+        },
+        "@typescript-eslint/utils": {
+            "typescript": "$typescript"
+        },
+        "format-imports": {
+            "eslint": "$eslint"
+        },
+        "typescript-eslint": {
+            "typescript": "$typescript"
+        }
     },
-    "format-imports": {
-      "eslint": "$eslint"
+    "workspaces": [
+        "mcp-servers/*"
+    ],
+    "keywords": [
+        "pi-package",
+        "claude-plugin",
+        "cursor-plugin",
+        "marketplace",
+        "skills"
+    ],
+    "pi": {
+        "extensions": [
+            "./extensions"
+        ],
+        "skills": [
+            "./plugins/admin/skills",
+            "./plugins/developer/skills"
+        ],
+        "prompts": [
+            "./prompts"
+        ],
+        "themes": [
+            "./themes"
+        ]
     },
-    "typescript-eslint": {
-      "typescript": "$typescript"
+    "scripts": {
+        "lint": "run-s lint:prettier:check lint:eslint:check",
+        "lint:eslint:check": "eslint .",
+        "lint:eslint:fix": "eslint --fix .",
+        "lint:fix": "run-s lint:prettier:fix lint:eslint:fix",
+        "lint:prettier": "eslint .",
+        "lint:prettier:check": "prettier --cache --check -u .",
+        "lint:prettier:fix": "prettier --cache --write -u ."
     }
-  },
-  "workspaces": [
-    "mcp-servers/*"
-  ],
-  "keywords": [
-    "pi-package",
-    "claude-plugin",
-    "cursor-plugin",
-    "marketplace",
-    "skills"
-  ],
-  "pi": {
-    "extensions": [
-      "./extensions"
-    ],
-    "skills": [
-      "./plugins/admin/skills",
-      "./plugins/developer/skills"
-    ],
-    "prompts": [
-      "./prompts"
-    ],
-    "themes": [
-      "./themes"
-    ]
-  },
-  "scripts": {
-    "lint": "run-s lint:prettier:check lint:eslint:check",
-    "lint:eslint:check": "eslint .",
-    "lint:eslint:fix": "eslint --fix .",
-    "lint:fix": "run-s lint:prettier:fix lint:eslint:fix",
-    "lint:prettier": "eslint .",
-    "lint:prettier:check": "prettier --cache --check -u .",
-    "lint:prettier:fix": "prettier --cache --write -u ."
-  }
 }

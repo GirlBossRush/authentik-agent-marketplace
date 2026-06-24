@@ -1,12 +1,12 @@
 ---
 name: testing
 description: >
-  Run authentik's test suites during development. Covers the Python unit and
-  integration tests, the browser-based end-to-end (e2e) tests, and the web
-  frontend tests — including running a single test or a subset, and the services
-  those tests require. Use when a contributor wants to run the Python e2e tests,
-  run a focused test while iterating, or understand why a test suite won't start
-  locally.
+    Run authentik's test suites during development. Covers the Python unit and
+    integration tests, the browser-based end-to-end (e2e) tests, and the web
+    frontend tests — including running a single test or a subset, and the services
+    those tests require. Use when a contributor wants to run the Python e2e tests,
+    run a focused test while iterating, or understand why a test suite won't start
+    locally.
 ---
 
 # authentik testing

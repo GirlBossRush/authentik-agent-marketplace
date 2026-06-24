@@ -1,13 +1,13 @@
 ---
 name: providers
 description: >
-  Configure Providers, where authentik acts as the identity provider and an
-  application trusts it. Covers OAuth2/OIDC, SAML, LDAP, RADIUS, Proxy
-  (forward-auth), SCIM, Remote Access (RAC), Shared Signals (SSF), and outbound
-  provisioning to Google Workspace and Microsoft Entra ID. Use when a user asks
-  to set up SAML/OIDC for an app, expose LDAP or RADIUS, protect an app that has
-  no SSO support via the proxy, or provision users out to a downstream service.
-  For login *into* authentik with an external account, use sources.
+    Configure Providers, where authentik acts as the identity provider and an
+    application trusts it. Covers OAuth2/OIDC, SAML, LDAP, RADIUS, Proxy
+    (forward-auth), SCIM, Remote Access (RAC), Shared Signals (SSF), and outbound
+    provisioning to Google Workspace and Microsoft Entra ID. Use when a user asks
+    to set up SAML/OIDC for an app, expose LDAP or RADIUS, protect an app that has
+    no SSO support via the proxy, or provision users out to a downstream service.
+    For login *into* authentik with an external account, use sources.
 ---
 
 # authentik providers

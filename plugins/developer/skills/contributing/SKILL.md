@@ -1,12 +1,12 @@
 ---
 name: contributing
 description: >
-  Guide a contributor through authentik's contribution process: filing a good
-  GitHub issue (bug report or feature request) with the right details, and the
-  pull request workflow — branch and commit conventions, what CI expects, the
-  CLA, and review. Use when someone wants to submit a GitHub issue, open a pull
-  request, or understand the project's contribution conventions before sending
-  changes upstream.
+    Guide a contributor through authentik's contribution process: filing a good
+    GitHub issue (bug report or feature request) with the right details, and the
+    pull request workflow — branch and commit conventions, what CI expects, the
+    CLA, and review. Use when someone wants to submit a GitHub issue, open a pull
+    request, or understand the project's contribution conventions before sending
+    changes upstream.
 ---
 
 # Contributing to authentik

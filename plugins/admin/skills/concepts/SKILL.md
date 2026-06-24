@@ -1,13 +1,13 @@
 ---
 name: concepts
 description: >
-  Explains authentik's core object model and routes documentation questions.
-  Use when a user asks what something means or how authentik's pieces relate —
-  Application vs Provider, Source vs Provider, Flow vs Stage vs Policy, Outpost,
-  Brand/Tenant, embedded outpost — or wants the right docs page for a topic.
-  This skill is conceptual and navigational. For actually building any of these
-  objects, hand off to the matching skill (providers,
-  sources, flows-stages, and so on).
+    Explains authentik's core object model and routes documentation questions.
+    Use when a user asks what something means or how authentik's pieces relate —
+    Application vs Provider, Source vs Provider, Flow vs Stage vs Policy, Outpost,
+    Brand/Tenant, embedded outpost — or wants the right docs page for a topic.
+    This skill is conceptual and navigational. For actually building any of these
+    objects, hand off to the matching skill (providers,
+    sources, flows-stages, and so on).
 ---
 
 # authentik concepts and documentation

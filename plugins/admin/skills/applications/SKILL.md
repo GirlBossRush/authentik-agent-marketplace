@@ -1,13 +1,13 @@
 ---
 name: applications
 description: >
-  Create and manage authentik Application objects and follow the integration
-  catalog to connect a specific third-party service. Use when a user names a
-  service they want to put behind authentik ("integrate Grafana", "put Nextcloud
-  behind SSO", "set up GitLab login") or asks about the Application object:
-  launch URL, icon, provider binding, authorization policy, and application
-  entitlements. The Application is the user-facing object; the protocol lives in
-  a Provider, so pair this skill with providers.
+    Create and manage authentik Application objects and follow the integration
+    catalog to connect a specific third-party service. Use when a user names a
+    service they want to put behind authentik ("integrate Grafana", "put Nextcloud
+    behind SSO", "set up GitLab login") or asks about the Application object:
+    launch URL, icon, provider binding, authorization policy, and application
+    entitlements. The Application is the user-facing object; the protocol lives in
+    a Provider, so pair this skill with providers.
 ---
 
 # authentik applications and integrations

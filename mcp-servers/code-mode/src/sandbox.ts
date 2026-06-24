@@ -5,8 +5,8 @@ import vm from "node:vm";
 import type { Ak } from "./client.ts";
 
 export interface SandboxResult {
-  result: unknown;
-  logs: string[];
+    result: unknown;
+    logs: string[];
 }
 
 /**
@@ -18,28 +18,29 @@ export interface SandboxResult {
  * is escapable); the binding is the boundary, per the design's trust model.
  */
 export async function runInSandbox(
-  code: string,
-  ak: Ak,
-  { timeoutMs = 30000 }: { timeoutMs?: number },
+    code: string,
+    ak: Ak,
+    { timeoutMs = 30000 }: { timeoutMs?: number },
 ): Promise<SandboxResult> {
-  const logs: string[] = [];
-  const record = (...args: unknown[]) =>
-    logs.push(
-      args
-        .map((a) => (typeof a === "string" ? a : JSON.stringify(a)))
-        .join(" "),
-    );
-  const sandbox = {
-    ak,
-    console: { log: record, error: record, warn: record, info: record },
-  };
-  const context = vm.createContext(sandbox);
-  const wrapped = `(async () => {\n${code}\n})()`;
-  const script = new vm.Script(wrapped, { filename: "agent-code.ts" });
-  const result = await script.runInContext(context, { timeout: timeoutMs });
-  // Force a plain serializable value (and surface non-serializable results early).
-  return {
-    result: result === undefined ? null : JSON.parse(JSON.stringify(result)),
-    logs,
-  };
+    const logs: string[] = [];
+    const record = (...args: unknown[]) =>
+        logs.push(
+            args
+                .map((a) => (typeof a === "string" ? a : JSON.stringify(a)))
+                .join(" "),
+        );
+    const sandbox = {
+        ak,
+        console: { log: record, error: record, warn: record, info: record },
+    };
+    const context = vm.createContext(sandbox);
+    const wrapped = `(async () => {\n${code}\n})()`;
+    const script = new vm.Script(wrapped, { filename: "agent-code.ts" });
+    const result = await script.runInContext(context, { timeout: timeoutMs });
+    // Force a plain serializable value (and surface non-serializable results early).
+    return {
+        result:
+            result === undefined ? null : JSON.parse(JSON.stringify(result)),
+        logs,
+    };
 }

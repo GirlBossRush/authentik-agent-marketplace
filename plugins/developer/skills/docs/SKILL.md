@@ -1,11 +1,11 @@
 ---
 name: docs
 description: >
-  Run and work on authentik's documentation site locally. Covers starting the
-  docs dev server with live reload, building the static docs, and where the
-  documentation, integration guides, and API reference sources live in the repo.
-  Use when a contributor wants to preview documentation changes, start the docs
-  server, or find which files back a given docs page.
+    Run and work on authentik's documentation site locally. Covers starting the
+    docs dev server with live reload, building the static docs, and where the
+    documentation, integration guides, and API reference sources live in the repo.
+    Use when a contributor wants to preview documentation changes, start the docs
+    server, or find which files back a given docs page.
 ---
 
 # authentik documentation development

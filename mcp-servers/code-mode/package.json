@@ -1,20 +1,20 @@
 {
-  "name": "@goauthentik/mcp-code-mode",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "bin": {
-    "authentik-code-mode": "./src/index.ts"
-  },
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.18.0",
-    "yaml": "^2.8.1",
-    "zod": "^3.25.0"
-  },
-  "devDependencies": {
-    "openapi-types": "^12.1.3"
-  }
+    "name": "@goauthentik/mcp-code-mode",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "bin": {
+        "authentik-code-mode": "./src/index.ts"
+    },
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.18.0",
+        "yaml": "^2.8.1",
+        "zod": "^3.25.0"
+    },
+    "devDependencies": {
+        "openapi-types": "^12.1.3"
+    }
 }
