@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: authentik
+  version: 2026.8.0
+paths:
+  /core/users/:
+    get:
+      operationId: core_users_list
+      summary: List users
+      tags: [core]
+      parameters:
+        - name: search
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+  /stages/captcha/:
+    post:
+      operationId: stages_captcha_create
+      summary: Create a captcha stage
+      tags: [stages]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CaptchaStage" }
+      responses:
+        "201":
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CaptchaStage" }
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        pk: { type: integer }
+        username: { type: string }
+    CaptchaStage:
+      type: object
+      properties:
+        name: { type: string }
+        public_key: { type: string }
+        private_key: { type: string }
