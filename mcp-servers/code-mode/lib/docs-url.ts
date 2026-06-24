@@ -1,19 +1,27 @@
-/** @file Resolve the authentik docs base URL for the configured instance. */
+/**
+ * @file Resolve the authentik docs base URL for the configured instance.
+ */
 
 /**
  * Stable-release docs (current).
  */
-export const DOCS_CURRENT_ORIGIN = "https://docs.goauthentik.io";
+// TODO: Switch this after llms.txt lands.
+// export const DOCS_CURRENT_ORIGIN = "https://docs.goauthentik.io";
+export const DOCS_CURRENT_ORIGIN = "https://main.goauthentik.io";
 /**
  * Pre-release / next docs — and the default when no version or override is known.
  */
-export const DOCS_NEXT_ORIGIN = "https://next.goauthentik.io";
+// TODO: Switch this after llms.txt lands.
+// export const DOCS_NEXT_ORIGIN = "https://next.goauthentik.io";
+export const DOCS_NEXT_ORIGIN = "https://main.goauthentik.io";
 /**
- * Integrations docs — single, unversioned.
+ * Integrations docs — unversioned.
  */
 export const INTEGRATIONS_ORIGIN = "https://integrations.goauthentik.io";
 
-/** Trim trailing slashes; treat empty/whitespace as unset. */
+/**
+ * Trim trailing slashes; treat empty/whitespace as unset.
+ */
 function normalizeOrigin(value: string | undefined): string | undefined {
     const trimmed = value?.trim();
     return trimmed ? trimmed.replace(/\/+$/, "") : undefined;
@@ -48,7 +56,9 @@ export function resolveDocsURL(
     return DOCS_NEXT_ORIGIN;
 }
 
-/** Resolve the (single, unversioned) integrations base URL. */
+/**
+ * Resolve the (single, unversioned) integrations base URL.
+ */
 export function resolveIntegrationsURL(
     env: Record<string, string | undefined>,
 ): string {
