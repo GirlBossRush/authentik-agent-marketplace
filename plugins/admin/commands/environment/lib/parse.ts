@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { parseEnv } from "node:util";
 
-import { agentEnvPathBuilder } from "./paths.ts";
+import { agentEnvPaths } from "./paths.ts";
 
 /**
  * Attempt to load environment variables from the specified `.env` file.
@@ -34,6 +34,10 @@ export function tryLoadEnvFile(envFilePath: string): NodeJS.Dict<string> {
  * ones. The resulting environment is combined with `process.env`, with the loaded variables taking
  * precedence.
  *
+ * Base paths (from `agentEnvPaths()`): the authentik install `.env` (fallback)
+ * then the cwd `.env` (primary). Any `envPaths` passed here are applied last
+ * (highest precedence).
+ *
  * @param envPaths Additional paths to `.env` files to load, in order of increasing precedence
  *
  * @returns An object containing the merged environment variables
@@ -41,7 +45,7 @@ export function tryLoadEnvFile(envFilePath: string): NodeJS.Dict<string> {
 export function parseEnvironment<T extends object = object>(
     ...envPaths: string[]
 ): NodeJS.ProcessEnv & T {
-    const paths: string[] = [agentEnvPathBuilder(".env"), ...envPaths];
+    const paths: string[] = [...agentEnvPaths(), ...envPaths];
 
     const envs = paths.map((path) => tryLoadEnvFile(path.toString()));
 
