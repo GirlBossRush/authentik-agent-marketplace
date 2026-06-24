@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "authentik-marketplace",
+  "description": "Agent skills for using and contributing to authentik",
+  "version": "1.0.0",
+  "owner": {
+    "name": "Authentik Security Inc.",
+    "url": "https://goauthentik.io"
+  },
+  "metadata": {
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "ak-admin",
+      "source": "./admin",
+      "description": "Skills for administering authentik instances",
+      "category": "security"
+    },
+    {
+      "name": "ak-dev",
+      "source": "./developer",
+      "description": "Skills for developers contributing to authentik's source code",
+      "category": "development"
+    }
+  ]
+}

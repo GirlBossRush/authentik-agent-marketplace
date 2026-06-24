@@ -1,0 +1,20 @@
+{
+  "name": "authentik-marketplace",
+  "owner": {
+    "name": "Authentik Security Inc.",
+    "email": "hello@goauthentik.io",
+    "url": "https://goauthentik.io"
+  },
+  "plugins": [
+    {
+      "name": "ak-admin",
+      "source": "./plugins/admin",
+      "description": "Skills for administering authentik instances"
+    },
+    {
+      "name": "ak-dev",
+      "source": "./plugins/developer",
+      "description": "Skills for developers contributing to authentik's source code"
+    }
+  ]
+}

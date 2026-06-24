@@ -1,0 +1,11 @@
+{
+  "name": "@goauthentik/agent-marketplace",
+  "version": "1.0.0",
+  "description": "LLM Marketplace for agentic tooling",
+  "author": {
+    "name": "Authentik Security Inc.",
+    "email": "hello@goauthentik.io",
+    "url": "https://goauthentik.io"
+  },
+  "keywords": ["authentik", "skills", "plugins"]
+}

@@ -1,0 +1,6 @@
+{
+  "extends": "@goauthentik/tsconfig",
+  "compilerOptions": {
+    "types": ["node"]
+  }
+}

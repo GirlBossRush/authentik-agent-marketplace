@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "ak-dev",
+  "description": "Skills for developers contributing to authentik's source code",
+  "version": "1.0.0",
+  "author": {
+    "name": "Authentik Security Inc.",
+    "email": "hello@goauthentik.io",
+    "url": "https://goauthentik.io"
+  },
+  "homepage": "https://goauthentik.io",
+  "repository": "https://github.com/goauthentik/agent-marketplace",
+  "license": "MIT",
+  "keywords": ["authentik", "identity-provider", "contributing", "development"]
+}
