@@ -20,7 +20,7 @@ test("extracts the condition value from a curated !Find", () => {
 });
 
 test("extracts every condition value of a multi-condition !Find", () => {
-    const { refs, violations } = walk("x: !Find [m, [a, \"v1\"], [b, \"v2\"]]");
+    const { refs, violations } = walk("x: !Find [m, [a, 'v1'], [b, 'v2']]");
     assert.deepEqual(violations, []);
     assert.deepEqual(
         refs.map((r) => r.targetValue),
