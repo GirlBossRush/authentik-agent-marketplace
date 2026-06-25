@@ -6,6 +6,7 @@ import {
     isSeq,
     isPair,
     isScalar,
+    isNode,
     type Document,
     type Node,
 } from "yaml";
@@ -16,6 +17,7 @@ import {
     CURATED_REFS,
     EXCLUDED_SCOPES,
 } from "#blueprint-policy";
+import { isObject } from "#predicates";
 
 // #region Public interfaces
 
@@ -77,17 +79,15 @@ function collectTaggedRefs(node: Node | null | undefined): {
 } {
     const refs: TaggedRef[] = [];
     const violations: string[] = [];
-    if (node == null) return { refs, violations };
+    if (!isNode(node)) return { refs, violations };
 
     /** The resolved YAML tag on a node, or "" if untagged/absent. */
     function nodeTag(n: unknown): string {
-        return n != null && typeof (n as { tag?: unknown }).tag === "string"
-            ? (n as { tag: string }).tag
-            : "";
+        return isObject(n) && typeof n.tag === "string" ? n.tag : "";
     }
 
     function walk(n: Node | null | undefined): void {
-        if (n == null) return;
+        if (!isNode(n)) return;
 
         const tag = typeof n.tag === "string" ? n.tag : "";
 
@@ -180,20 +180,14 @@ function collectTaggedRefs(node: Node | null | undefined): {
             );
             return;
         }
-        if (
-            !(
-                modelNode != null &&
-                isScalar(modelNode) &&
-                typeof modelNode.value === "string"
-            )
-        ) {
+        if (!(isScalar(modelNode) && typeof modelNode.value === "string")) {
             violations.push("!Find model name must be a scalar string");
             return;
         }
         // Each remaining item is a condition: [field, scalar].
         for (let i = 1; i < items.length; i++) {
             const cond = items[i];
-            if (!(cond != null && isSeq(cond))) {
+            if (!isSeq(cond)) {
                 violations.push(
                     "!Find condition must be a [field, value] sequence",
                 );
@@ -220,19 +214,13 @@ function collectTaggedRefs(node: Node | null | undefined): {
                 );
                 return;
             }
-            if (
-                !(
-                    fieldNode != null &&
-                    isScalar(fieldNode) &&
-                    typeof fieldNode.value === "string"
-                )
-            ) {
+            if (!(isScalar(fieldNode) && typeof fieldNode.value === "string")) {
                 violations.push(
                     "!Find condition field must be a scalar string",
                 );
                 return;
             }
-            if (!(valNode != null && isScalar(valNode))) {
+            if (!isScalar(valNode)) {
                 violations.push("!Find condition value must be a scalar");
                 return;
             }
@@ -308,7 +296,7 @@ function attrValueNode(
     entryIndex: number,
     attrKey: string,
 ): Node | null {
-    if (contents == null || !isMap(contents)) return null;
+    if (!isMap(contents)) return null;
     let entriesNode: Node | null = null;
 
     for (const pair of contents.items) {
@@ -322,9 +310,9 @@ function attrValueNode(
         }
     }
 
-    if (entriesNode == null || !isSeq(entriesNode)) return null;
+    if (!isSeq(entriesNode)) return null;
     const entryNode = entriesNode.items[entryIndex];
-    if (entryNode == null || !isMap(entryNode as Node)) return null;
+    if (!isMap(entryNode as Node)) return null;
     let attrsNode: Node | null = null;
     for (const pair of (entryNode as { items: unknown[] }).items) {
         if (isPair(pair) && isScalar(pair.key) && pair.key.value === "attrs") {
@@ -333,7 +321,7 @@ function attrValueNode(
         }
     }
 
-    if (attrsNode == null || !isMap(attrsNode)) return null;
+    if (!isMap(attrsNode)) return null;
     for (const pair of attrsNode.items) {
         if (isPair(pair) && isScalar(pair.key) && pair.key.value === attrKey) {
             return (pair.value as Node) ?? null;
@@ -355,7 +343,7 @@ const REF_PERMITTED_TAGS: ReadonlySet<string> = new Set(["!Find", "!KeyOf"]);
  * (clearing the relation). Returns a violation string, or null if permitted.
  */
 function checkRefAttr(node: Node | null): string | null {
-    if (node == null) {
+    if (!isNode(node)) {
         return "must be a permitted reference (a curated !Find or an in-blueprint !KeyOf), not a plain literal";
     }
 
@@ -375,9 +363,7 @@ function checkRefAttr(node: Node | null): string | null {
     if (isSeq(node)) {
         for (const item of node.items) {
             const itemTag =
-                item != null && typeof (item as Node).tag === "string"
-                    ? (item as Node).tag
-                    : "";
+                isNode(item) && typeof item.tag === "string" ? item.tag : "";
             if (
                 typeof itemTag !== "string" ||
                 !REF_PERMITTED_TAGS.has(itemTag)
@@ -545,7 +531,7 @@ export function validateBlueprint(content: string): BlueprintValidation {
                         key,
                     );
                     if (
-                        fnode != null &&
+                        isNode(fnode) &&
                         typeof fnode.tag === "string" &&
                         fnode.tag !== ""
                     ) {
@@ -594,7 +580,7 @@ export function validateBlueprint(content: string): BlueprintValidation {
                         key,
                     );
                     if (
-                        cnode != null &&
+                        isNode(cnode) &&
                         typeof cnode.tag === "string" &&
                         cnode.tag !== ""
                     ) {
@@ -621,9 +607,9 @@ export function validateBlueprint(content: string): BlueprintValidation {
     // Default-deny on tags. Never throw on hostile/malformed input: any error
     // becomes a violation, never an exception.
     try {
-        if (pdoc.contents != null) {
+        if (isNode(pdoc.contents)) {
             const { refs, violations: tagViolations } = collectTaggedRefs(
-                pdoc.contents as Node,
+                pdoc.contents,
             );
             violations.push(...tagViolations);
             for (const ref of refs) {

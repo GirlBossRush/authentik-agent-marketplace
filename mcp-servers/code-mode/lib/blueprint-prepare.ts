@@ -32,6 +32,7 @@ import {
 } from "#blueprint-diff";
 import { buildUndoSnapshot, type UndoSnapshot } from "#blueprint-undo";
 import { isDestructiveEntry } from "#blueprint-policy";
+import { isObject } from "#predicates";
 import type { Ak } from "#client";
 
 /**
@@ -95,17 +96,11 @@ function toParsedEntry(raw: unknown): ParsedEntry & { state?: string } {
 
     const rawIDs = obj.identifiers;
     const identifiers =
-        rawIDs != null && typeof rawIDs === "object" && !Array.isArray(rawIDs)
-            ? (rawIDs as Record<string, unknown>)
-            : {};
+        isObject(rawIDs) && !Array.isArray(rawIDs) ? rawIDs : {};
 
     const rawAttrs = obj.attrs;
     const attrs =
-        rawAttrs != null &&
-        typeof rawAttrs === "object" &&
-        !Array.isArray(rawAttrs)
-            ? (rawAttrs as Record<string, unknown>)
-            : {};
+        isObject(rawAttrs) && !Array.isArray(rawAttrs) ? rawAttrs : {};
 
     const state = typeof obj.state === "string" ? obj.state : undefined;
 

@@ -28,6 +28,7 @@ import { stringify } from "yaml";
 import type { Ak } from "#client";
 import type { ParsedEntry } from "#blueprint-diff";
 import { isDestructiveEntry } from "#blueprint-policy";
+import { isObject } from "#predicates";
 
 /** How cleanly a proposed change can be reverted by the restore point. */
 export type Reversibility = "clean" | "lossy" | "impossible";
@@ -89,10 +90,7 @@ function extractResults(data: unknown): Record<string, unknown>[] {
     if (data && typeof data === "object" && "results" in data) {
         const results = (data as { results: unknown }).results;
         if (Array.isArray(results)) {
-            return results.filter(
-                (r): r is Record<string, unknown> =>
-                    r != null && typeof r === "object",
-            );
+            return results.filter(isObject);
         }
     }
     return [];

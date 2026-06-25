@@ -14,6 +14,8 @@
  * already blocks writes and secret-reveal paths.
  */
 
+import { isObject } from "#predicates";
+
 import type { Ak } from "./client.ts";
 
 /**
@@ -133,10 +135,7 @@ function extractResults(data: unknown): Record<string, unknown>[] {
     if (data && typeof data === "object" && "results" in data) {
         const results = (data as { results: unknown }).results;
         if (Array.isArray(results)) {
-            return results.filter(
-                (r): r is Record<string, unknown> =>
-                    r != null && typeof r === "object",
-            );
+            return results.filter(isObject);
         }
     }
     return [];
