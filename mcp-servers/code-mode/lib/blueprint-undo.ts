@@ -1,17 +1,17 @@
 /**
- * @file Undo snapshot + reversibility classification — the second read-only half
+ * @file Undo snapshot + reversibility classification: the second read-only half
  * of the credential-free "prepare to apply" handoff (Task 5 consumes this).
  *
  * Before an operator applies a proposed blueprint, this module reads the CURRENT
  * live state of each object the blueprint would touch and emits a "restore
  * point" blueprint (YAML) that, re-applied, reverts a pure-config change. It also
- * classifies — honestly — how cleanly the change can be undone:
+ * classifies how cleanly the change can be undone:
  *
  *   - `clean`      pure attribute update of an existing object (same UUID): the
  *                  restore point sets the touched fields back to their current
  *                  values, leaving the object (and every reference to it) intact.
  *   - `lossy`      create-only: the object does not exist yet, so undo means
- *                  delete. A later recreate churns the UUID and any references —
+ *                  delete. A later recreate churns the UUID and any references, so
  *                  the data is not byte-for-byte recoverable.
  *   - `impossible` a delete (`state: absent`) or any crypto object, or any other
  *                  external side-effect: there is nothing this snapshot can do to
@@ -32,7 +32,7 @@ import { isDestructiveEntry } from "#blueprint-policy";
 /** How cleanly a proposed change can be reverted by the restore point. */
 export type Reversibility = "clean" | "lossy" | "impossible";
 
-/** The restore point plus its honest reversibility classification. */
+/** The restore point plus its reversibility classification. */
 export interface UndoSnapshot {
     /** A restore-point blueprint (YAML) capturing pre-apply live state. */
     blueprint: string;

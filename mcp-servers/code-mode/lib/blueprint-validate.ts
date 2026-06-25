@@ -32,8 +32,8 @@ export interface BlueprintValidation {
 
 /**
  * Default-deny allow-list of YAML tags this validator understands AND can prove
- * safe. ANY node carrying a non-empty tag outside this set is rejected on sight
- * — we never enumerate dangerous tags, only permitted ones. This structurally
+ * safe. ANY node carrying a non-empty tag outside this set is rejected; we
+ * enumerate only permitted tags, never dangerous ones. This structurally
  * closes whole classes of bypass (!FindObject, !Context, !Format, !Env, …).
  *
  * yaml v2 normalizes a local tag like `!Find` to the resolved form `!Find`
