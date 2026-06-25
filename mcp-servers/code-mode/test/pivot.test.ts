@@ -3,8 +3,6 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
-import { createServer } from "node:http";
-import type { AddressInfo } from "node:net";
 import { parse } from "yaml";
 import type { OpenAPIV3 } from "openapi-types";
 
@@ -16,47 +14,41 @@ const SPEC = derefSchema(
     parse(readFileSync(resolve(__dirname, "__fixtures__/schema.yml"), "utf-8")),
 ) as OpenAPIV3.Document;
 
-test("PIVOT: discover + create a captcha stage in one confirmed write block", async () => {
-    const calls: string[] = [];
-    const inst = createServer((req, res) => {
-        calls.push(`${req.method} ${req.url}`);
-        res.statusCode = 201;
-        res.setHeader("content-type", "application/json");
-        res.end(JSON.stringify({ pk: "stage-1", name: "captcha" }));
+test("PIVOT: discover an endpoint, read data, then validate a proposed blueprint", async () => {
+    const tools = createTools({
+        spec: SPEC,
+        config: { baseURL: "http://127.0.0.1:1", token: "t" },
     });
 
-    await new Promise<void>((r) => inst.listen(0, () => r()));
+    // 1. The agent discovers the endpoint.
+    const { operations } = tools.search({ query: "create captcha stage" });
+    assert.ok(
+        operations.some((o) => o.operationId === "stages_captcha_create"),
+    );
 
-    try {
-        const { port } = inst.address() as AddressInfo;
-        const tools = createTools({
-            spec: SPEC,
-            config: { baseURL: `http://127.0.0.1:${port}`, token: "t" },
-        });
+    // 2. The agent proposes a blueprint; the validator rejects a denied model.
+    const badBlueprint = `
+version: 1
+entries:
+  - model: authentik_core.token
+    attrs:
+      identifier: my-token
+`;
+    const badResult = tools.validate({ content: badBlueprint });
+    assert.equal(badResult.ok, false);
+    assert.ok(badResult.violations.some((v) => v.includes("denied model")));
 
-        // 1. The agent discovers the endpoint.
-        const { operations } = tools.search({ query: "create captcha stage" });
-        assert.ok(
-            operations.some((o) => o.operationId === "stages_captcha_create"),
-        );
-
-        // 2. The agent writes one block; first call returns a confirm token.
-        const code = `
-      const stage = (await ak.request("POST", "/stages/captcha/", { body: { name: "captcha" } })).data;
-      return stage.pk;
-    `;
-
-        const first = await tools.executeWrite({ code });
-
-        assert.ok("status" in first);
-        assert.equal(first.status, "needs_confirmation");
-
-        // 3. Confirmed run performs the write.
-        const second = await tools.executeWrite({ code, confirm: first.token });
-        assert.ok("result" in second);
-        assert.equal(second.result, "stage-1");
-        assert.ok(calls.includes("POST /api/v3/stages/captcha/"));
-    } finally {
-        inst.close();
-    }
+    // 3. A clean blueprint passes.
+    const goodBlueprint = `
+version: 1
+entries:
+  - model: authentik_flows.flow
+    attrs:
+      name: my-flow
+      slug: my-flow
+      designation: authentication
+`;
+    const goodResult = tools.validate({ content: goodBlueprint });
+    assert.equal(goodResult.ok, true);
+    assert.deepEqual(goodResult.violations, []);
 });

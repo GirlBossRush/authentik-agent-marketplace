@@ -69,39 +69,10 @@ test("execute blocks writes (read-only binding)", async () => {
     );
 });
 
-test("execute_write requires a matching confirm token, then runs", async () => {
-    await withMock(
-        (_req, res) => {
-            res.statusCode = 201;
-            res.end(JSON.stringify({ pk: 7 }));
-        },
-        async (baseURL) => {
-            const tools = createTools({
-                spec: SPEC,
-                config: { baseURL: baseURL, token: "t" },
-            });
-            const code = `return (await ak.request("POST","/stages/captcha/",{body:{name:"c"}})).data;`;
-            const first = await tools.executeWrite({ code });
-            assert.ok("status" in first);
-            assert.equal(first.status, "needs_confirmation");
-            assert.equal(first.token, tools.confirmTokenFor(code));
-            const second = await tools.executeWrite({
-                code,
-                confirm: first.token,
-            });
-            assert.ok("result" in second);
-            assert.deepEqual(second.result, { pk: 7 });
-        },
-    );
-});
-
-test("execute_write rejects a wrong confirm token without running", async () => {
-    const tools = createTools({
-        spec: SPEC,
-        config: { baseURL: "http://127.0.0.1:1", token: "t" },
-    });
-    const code = `return await ak.request("POST","/stages/captcha/",{body:{}});`;
-    const out = await tools.executeWrite({ code, confirm: "wrongtok" });
-    assert.ok("status" in out);
-    assert.equal(out.status, "needs_confirmation");
+test("tools expose validate and no longer expose executeWrite", () => {
+    const spec = { openapi: "3.0.3", info: { title: "t", version: "1" }, paths: {}, components: {} };
+    const tools = createTools({ spec, config: { baseURL: "http://x", token: "t" } });
+    assert.equal(typeof tools.validate, "function");
+    assert.equal("executeWrite" in tools, false);
+    assert.equal(tools.validate({ content: "version: 1\nentries: []" }).ok, true);
 });

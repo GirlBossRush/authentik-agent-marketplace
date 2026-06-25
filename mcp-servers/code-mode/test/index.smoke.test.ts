@@ -51,8 +51,9 @@ test("server starts, serves schema, and responds to tools/list over stdio", asyn
         await new Promise((r) => setTimeout(r, 1500));
 
         assert.match(out, /"search"/);
-        assert.match(out, /"execute_write"/);
+        assert.match(out, /"validate_blueprint"/);
         assert.match(out, /"docs"/);
+        assert.doesNotMatch(out, /"execute_write"/);
     } finally {
         child.kill();
         inst.close();

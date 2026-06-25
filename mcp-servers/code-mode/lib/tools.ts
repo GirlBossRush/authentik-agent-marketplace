@@ -1,9 +1,8 @@
-/** @file The three code-mode tools: search, execute, execute_write. */
-
-import { createHash } from "node:crypto";
+/** @file The three code-mode tools: search, execute, validate. */
 
 import type { OpenAPIV3 } from "openapi-types";
 
+import { validateBlueprint, type BlueprintValidation } from "./blueprint-validate.ts";
 import { createAk } from "./client.ts";
 import type { AKConfig } from "./config.ts";
 import { runInSandbox, type SandboxResult } from "./sandbox.ts";
@@ -14,17 +13,7 @@ export interface CreateToolsDeps {
     config: AKConfig;
 }
 
-export interface WriteConfirmation {
-    status: "needs_confirmation";
-    token: string;
-    preview: string;
-    message: string;
-}
-
 export function createTools({ spec, config }: CreateToolsDeps) {
-    const confirmTokenFor = (code: string): string =>
-        createHash("sha256").update(code).digest("hex").slice(0, 8);
-
     const search = ({
         query,
         limit,
@@ -44,27 +33,8 @@ export function createTools({ spec, config }: CreateToolsDeps) {
         return runInSandbox(code, ak, {});
     };
 
-    const executeWrite = async ({
-        code,
-        confirm,
-    }: {
-        code: string;
-        confirm?: string;
-    }): Promise<SandboxResult | WriteConfirmation> => {
-        const token = confirmTokenFor(code);
-        if (confirm !== token) {
-            return {
-                status: "needs_confirmation",
-                token,
-                preview: code,
-                message:
-                    "This code will run with WRITE access to the authentik instance. " +
-                    `Re-call execute_write with confirm: "${token}" to run it unchanged.`,
-            };
-        }
-        const ak = createAk(config, { allowWrites: true });
-        return runInSandbox(code, ak, {});
-    };
+    const validate = ({ content }: { content: string }): BlueprintValidation =>
+        validateBlueprint(content);
 
-    return { search, execute, executeWrite, confirmTokenFor };
+    return { search, execute, validate };
 }

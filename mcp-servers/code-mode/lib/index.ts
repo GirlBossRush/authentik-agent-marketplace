@@ -62,11 +62,11 @@ async function main(): Promise<void> {
         async (args) => asContent(await tools.execute(args)),
     );
 
-    tool<{ code: string; confirm?: string }>(
-        "execute_write",
-        "Run JavaScript with a WRITE-ENABLED `ak.request(...)` client. Two-step: call once with { code } to receive a confirm token + preview, then call again with { code, confirm } (same code) to run it. Reads and writes may be mixed in one block.",
-        { code: z.string(), confirm: z.string().optional() },
-        async (args) => asContent(await tools.executeWrite(args)),
+    tool<{ content: string }>(
+        "validate_blueprint",
+        "Validate a proposed authentik Blueprint (YAML) WITHOUT applying it. Returns {ok, violations}. This server is propose-only: it never mutates the instance. Rejects denied models (tokens, users, groups, roles, crypto), the !Env tag, and explicit secret fields. Hand the operator the validated blueprint to apply themselves.",
+        { content: z.string() },
+        async (args) => asContent(tools.validate(args)),
     );
 
     tool<Record<string, never>>(
