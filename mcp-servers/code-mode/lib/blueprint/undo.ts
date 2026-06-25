@@ -1,6 +1,6 @@
 /**
  * @file Undo snapshot + reversibility classification: the second read-only half
- * of the credential-free "prepare to apply" handoff (Task 5 consumes this).
+ * of the credential-free "prepare to apply" handoff.
  *
  * Before an operator applies a proposed blueprint, this module reads the CURRENT
  * live state of each object the blueprint would touch and emits a "restore
@@ -25,10 +25,14 @@
  */
 
 import { stringify } from "yaml";
+
+import { isDestructiveEntry } from "#blueprint/policy";
+import {
+    findLiveObject,
+    formatIdentifier,
+    type ParsedEntry,
+} from "#blueprint/live-lookup";
 import type { Ak } from "#client";
-import type { ParsedEntry } from "#blueprint-diff";
-import { isDestructiveEntry } from "#blueprint-policy";
-import { isObject } from "#predicates";
 
 /** How cleanly a proposed change can be reverted by the restore point. */
 export type Reversibility = "clean" | "lossy" | "impossible";
@@ -41,108 +45,6 @@ export interface UndoSnapshot {
     reversibility: Reversibility;
     /** Human-readable caveats, one per entry that can't be cleanly undone. */
     notes: string[];
-}
-
-/**
- * Maps a blueprint model to its read-only list endpoint and the query parameters
- * the endpoint accepts as exact filters. Mirrors the mapping in
- * `blueprint-diff.ts`; identifiers not listed here fall back to client-side
- * matching against the returned results.
- */
-const MODEL_LIST: Readonly<
-    Record<
-        string,
-        { path: string; filterParams: readonly string[]; wideFetch?: boolean }
-    >
-> = {
-    "authentik_core.application": {
-        path: "/core/applications/",
-        filterParams: ["slug"],
-    },
-    "authentik_providers_oauth2.oauth2provider": {
-        path: "/providers/oauth2/",
-        filterParams: [],
-        wideFetch: true,
-    },
-    "authentik_providers_saml.samlprovider": {
-        path: "/providers/saml/",
-        filterParams: [],
-        wideFetch: true,
-    },
-};
-
-/** The largest page size authentik's DRF list endpoints accept. */
-const MAX_PAGE_SIZE = 100;
-
-/** True if `obj` matches every identifier field exactly. */
-function matchesIdentifiers(
-    obj: Record<string, unknown>,
-    identifiers: Record<string, unknown>,
-): boolean {
-    for (const [key, value] of Object.entries(identifiers)) {
-        if (obj[key] !== value) return false;
-    }
-
-    return true;
-}
-
-/** Extract the `results` array from a DRF list response, defensively. */
-function extractResults(data: unknown): Record<string, unknown>[] {
-    if (data && typeof data === "object" && "results" in data) {
-        const results = (data as { results: unknown }).results;
-
-        if (Array.isArray(results)) {
-            return results.filter(isObject);
-        }
-    }
-
-    return [];
-}
-
-/**
- * Look up the live object matching an entry, or `null` if it could not be
- * positively found (absent, unmapped model, non-200 read). Always GETs the
- * model's list endpoint and re-checks every identifier client-side, so a
- * non-filtering endpoint can never produce a false match.
- */
-async function findLiveObject(
-    entry: ParsedEntry,
-    ak: Ak,
-): Promise<Record<string, unknown> | null> {
-    const mapping = MODEL_LIST[entry.model];
-    if (!mapping) return null;
-
-    const query: Record<string, string | number> = {};
-
-    for (const param of mapping.filterParams) {
-        const value = entry.identifiers[param];
-
-        if (value !== undefined && value !== null) {
-            query[param] = String(value);
-        }
-    }
-
-    if (mapping.wideFetch) {
-        query.page_size = MAX_PAGE_SIZE;
-    }
-
-    const res = await ak.request("GET", mapping.path, { query });
-    if (res.status !== 200) return null;
-
-    const results = extractResults(res.data);
-
-    return (
-        results.find((obj) => matchesIdentifiers(obj, entry.identifiers)) ??
-        null
-    );
-}
-
-/** Render an identifiers map as a stable, readable string for a note. */
-function formatIdentifier(identifiers: Record<string, unknown>): string {
-    return Object.entries(identifiers)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([k, v]) => `${k}=${String(v)}`)
-        .join(",");
 }
 
 /** A single entry of the emitted restore-point blueprint. */
@@ -177,12 +79,11 @@ export async function buildUndoSnapshot(
     };
 
     for (const entry of entries) {
-        const state = (entry as ParsedEntry & { state?: string }).state;
         const id = formatIdentifier(entry.identifiers);
 
         // Deletes and crypto (and any other destructive op) cannot be undone by
         // re-applying a config snapshot — there is no live state to capture.
-        if (isDestructiveEntry(entry.model, state)) {
+        if (isDestructiveEntry(entry.model, entry.state)) {
             worsen("impossible");
             notes.push(
                 `${entry.model} (${id}): cannot be undone — destructive change (delete or crypto) or external side-effect`,
@@ -190,12 +91,13 @@ export async function buildUndoSnapshot(
             continue;
         }
 
-        const live = await findLiveObject(entry, ak);
+        const lookup = await findLiveObject(entry, ak);
         const attrs = entry.attrs ?? {};
 
-        if (live === null) {
-            // Create-only: applying the blueprint creates the object, so undo is
-            // a delete. A later recreate churns the UUID and any references.
+        if (lookup.kind !== "found") {
+            // Create-only (or existence unconfirmed): applying the blueprint
+            // creates the object, so undo is a delete. A later recreate churns
+            // the UUID and any references.
             worsen("lossy");
             notes.push(
                 `${entry.model} (${id}): create-only — undo is a delete; recreating later churns the object's UUID and any references`,
@@ -205,6 +107,7 @@ export async function buildUndoSnapshot(
 
         // Pure attribute update of an existing object (same UUID): the restore
         // point sets exactly the touched fields back to their current values.
+        const live = lookup.live;
         const restoreAttrs: Record<string, unknown> = {};
 
         for (const key of Object.keys(attrs)) {

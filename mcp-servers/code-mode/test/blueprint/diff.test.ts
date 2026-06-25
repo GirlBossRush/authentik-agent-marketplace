@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { computeDiff } from "#blueprint-diff";
+import { computeDiff } from "#blueprint/diff";
 
 const ak = {
     request: async (_m: string, path: string) => {

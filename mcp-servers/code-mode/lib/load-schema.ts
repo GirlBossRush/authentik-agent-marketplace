@@ -3,8 +3,8 @@
 import type { OpenAPIV3 } from "openapi-types";
 import { parse } from "yaml";
 
-import type { AKConfig } from "./config.ts";
-import { derefSchema } from "./schema.ts";
+import type { AKConfig } from "#config";
+import { derefSchema } from "#schema";
 
 /** Fetch and dereference the running instance's OpenAPI document. */
 export async function fetchSchema(

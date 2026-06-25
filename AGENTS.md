@@ -40,15 +40,24 @@ A typical admin skill: explain the model (L2), send the agent to the docs for sp
 
 ## MCP server: `authentik-code-mode`
 
-`mcp-servers/code-mode/` is a TypeScript stdio MCP server that exposes authentik's whole REST API as **code** instead of hundreds of individual tools. Three tools:
+`mcp-servers/code-mode/` is a TypeScript stdio MCP server that exposes authentik's whole REST API as **code** instead of hundreds of individual tools. It is **propose-only**: it holds no write/apply credential and never mutates the instance. Five tools:
 
 - `search(query)`: free-text search over the instance's OpenAPI operations, returns matching ops and their schemas.
 - `execute(code)`: runs JS with a **read-only** `ak.request(method, path, { query, body })` (GET/HEAD/OPTIONS only).
-- `execute_write(code[, confirm])`: write-enabled and **two-step**. Call with `{ code }` to get a confirm token and preview, then call again with `{ code, confirm }` (same code) to run it.
+- `validate_blueprint(content)`: validates a proposed Blueprint (YAML) against a closed allow-list policy without applying it; returns `{ ok, violations, flags }`.
+- `prepare_apply(content)`: validates, then returns a trusted diff, an undo snapshot, irreversible-op flags, and the exact `ak apply_blueprint` command for the operator to run. Never applies.
+- `docs()`: version-aware authentik docs base URLs for this instance.
 
 It fetches `${AUTHENTIK_URL}/api/v3/schema/` at startup so discovery always matches the running instance's version. Auth is two env vars, `AUTHENTIK_URL` and `AUTHENTIK_TOKEN` (the token carries the operator's own permissions). `.mcp.json` registers it for plugin installs via `${CLAUDE_PLUGIN_ROOT}`.
 
-The source runs as `.ts` directly under Node 25's native type stripping, so there is **no build step** (`tsconfig.json` is `noEmit`). `index.ts` is the entry; `tools.ts` wires the three tools; `client.ts`/`sandbox.ts` run the request client and JS sandbox; `load-schema.ts`/`schema.ts` handle the OpenAPI spec; `config.ts` reads env.
+The source runs as `.ts` directly under Node's native type stripping, so there is **no build step** (`tsconfig.json` is `noEmit`). Internal imports use the `#*` subpath alias (`#client`, `#blueprint/validate`) defined in `package.json`, not relative paths. The layout under `lib/`:
+
+- **Server core:** `index.ts` (entry + MCP tool registration), `tools.ts` (wires the five tools), `config.ts`, `version.ts`.
+- **Read runtime** (the `search`/`execute` half): `client.ts` (the read-only `ak.request`), `sandbox.ts` (the `vm` code sandbox), `schema.ts` (operation search + `$ref` deref), `load-schema.ts` (startup schema fetch), `docs-url.ts` (version-aware docs URLs).
+- **`blueprint/`** (the `validate`/`prepare` half): `policy.ts` (allow-list data), `validate.ts` (the orchestrator) with its helpers `tags.ts` (default-deny YAML-tag walk), `refs.ts` (reference curation), and `duration.ts` (token-validity parsing); `diff.ts` + `undo.ts` (the operator handoff) over a shared `live-lookup.ts`; and `prepare.ts` (ties validate + diff + undo into the handoff).
+- `predicates.ts`: shared type-guards.
+
+`test/` mirrors this tree (`test/blueprint/` for the subsystem). See the server's `README.md` for the security model and `docs/agent-security-model.md` for the threat model.
 
 ## Commands
 
@@ -64,8 +73,8 @@ MCP server tests use the Node built-in test runner (`node:test`), no extra deps,
 
 ```bash
 cd mcp-servers/code-mode
-node --test src/*.test.ts              # full suite
-node --test src/tools.test.ts          # a single test file
+node --test                            # full suite (discovers test/ recursively)
+node --test test/tools.test.ts         # a single test file
 ```
 
 ## Dependency handling

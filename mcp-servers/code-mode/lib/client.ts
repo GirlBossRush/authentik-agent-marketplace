@@ -1,6 +1,6 @@
 /** @file Authenticated `ak.request` helper bound into the sandbox. */
 
-import type { AKConfig } from "./config.ts";
+import type { AKConfig } from "#config";
 
 const READ_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 

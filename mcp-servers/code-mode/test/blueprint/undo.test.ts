@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { parse } from "yaml";
-import { buildUndoSnapshot } from "#blueprint-undo";
+import { buildUndoSnapshot } from "#blueprint/undo";
 
 test("undo snapshot captures current state for updates (clean)", async () => {
     const ak = {

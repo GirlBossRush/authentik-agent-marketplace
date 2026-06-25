@@ -8,6 +8,38 @@ Exposes authentik's API to an agent as **code**, not as hundreds of tools:
 - `prepare_apply(content)`: validate, then return a trusted diff, an undo snapshot, irreversible-op flags, and the exact `ak apply_blueprint` command for the operator to run. Never applies.
 - `docs()`: version-aware docs URLs for this instance.
 
+## Layout
+
+No build step — `.ts` runs directly under Node's native type stripping. Internal
+imports use the `#*` subpath alias from `package.json` (`#client`,
+`#blueprint/validate`), never relative paths. `test/` mirrors this tree.
+
+```
+lib/
+  index.ts          entry + MCP tool registration
+  tools.ts          wires the five tools
+  config.ts         env → { baseURL, token }
+  version.ts        server identity constants
+  predicates.ts     shared type-guards
+  # read runtime (the search / execute half)
+  client.ts         the read-only ak.request (blocks writes + secret reveals)
+  sandbox.ts        the vm code sandbox bound to `ak`
+  schema.ts         operation search + $ref deref
+  load-schema.ts    fetch the instance's OpenAPI schema at startup
+  docs-url.ts       resolve version-aware docs base URLs
+  # blueprint subsystem (the validate / prepare half)
+  blueprint/
+    policy.ts       allow-list data: models, per-attr rules, curated refs
+    validate.ts     the policy-enforcement orchestrator…
+    tags.ts         …default-deny YAML-tag walk
+    refs.ts         …reference curation
+    duration.ts     …token-validity parsing
+    live-lookup.ts  shared read-only "does this object exist live?" lookup
+    diff.ts         trusted diff vs the live instance
+    undo.ts         undo snapshot + reversibility classification
+    prepare.ts      ties validate + diff + undo into the operator handoff
+```
+
 ## Auth
 
 Set two environment variables (the token carries your own permissions):

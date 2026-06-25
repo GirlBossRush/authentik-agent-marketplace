@@ -24,14 +24,11 @@
 
 import { parse } from "yaml";
 
-import { validateBlueprint, type FlagItem } from "#blueprint-validate";
-import {
-    computeDiff,
-    type BlueprintDiff,
-    type ParsedEntry,
-} from "#blueprint-diff";
-import { buildUndoSnapshot, type UndoSnapshot } from "#blueprint-undo";
-import { isDestructiveEntry } from "#blueprint-policy";
+import { validateBlueprint, type FlagItem } from "#blueprint/validate";
+import { computeDiff, type BlueprintDiff } from "#blueprint/diff";
+import { buildUndoSnapshot, type UndoSnapshot } from "#blueprint/undo";
+import { isDestructiveEntry } from "#blueprint/policy";
+import type { ParsedEntry } from "#blueprint/live-lookup";
 import { isObject } from "#predicates";
 import type { Ak } from "#client";
 
@@ -89,7 +86,7 @@ const DESTRUCTIVE_NOTICE =
  * Defensive: `parse` returns `unknown`-shaped data, so every field is read
  * guardedly and defaults to a safe empty value.
  */
-function toParsedEntry(raw: unknown): ParsedEntry & { state?: string } {
+function toParsedEntry(raw: unknown): ParsedEntry {
     const obj = (raw ?? {}) as Record<string, unknown>;
 
     const model = typeof obj.model === "string" ? obj.model : "";

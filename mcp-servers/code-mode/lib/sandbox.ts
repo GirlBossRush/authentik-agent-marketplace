@@ -2,7 +2,7 @@
 
 import vm from "node:vm";
 
-import type { Ak } from "./client.ts";
+import type { Ak } from "#client";
 
 export interface SandboxResult {
     result: unknown;

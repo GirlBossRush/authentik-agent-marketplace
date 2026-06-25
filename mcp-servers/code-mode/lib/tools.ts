@@ -5,12 +5,12 @@ import type { OpenAPIV3 } from "openapi-types";
 import {
     validateBlueprint,
     type BlueprintValidation,
-} from "./blueprint-validate.ts";
-import { prepareApply, type PrepareResult } from "#blueprint-prepare";
-import { createAk } from "./client.ts";
-import type { AKConfig } from "./config.ts";
-import { runInSandbox, type SandboxResult } from "./sandbox.ts";
-import { searchOperations, type OperationHit } from "./schema.ts";
+} from "#blueprint/validate";
+import { prepareApply, type PrepareResult } from "#blueprint/prepare";
+import { createAk } from "#client";
+import type { AKConfig } from "#config";
+import { runInSandbox, type SandboxResult } from "#sandbox";
+import { searchOperations, type OperationHit } from "#schema";
 
 export interface CreateToolsDeps {
     spec: OpenAPIV3.Document;

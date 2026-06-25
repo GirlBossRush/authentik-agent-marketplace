@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { prepareApply } from "#blueprint-prepare";
+import { prepareApply } from "#blueprint/prepare";
 
 test("invalid blueprint returns violations and no apply artifacts", async () => {
     const r = await prepareApply(

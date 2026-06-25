@@ -6,11 +6,11 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z, type ZodRawShape } from "zod";
 
-import { loadConfig } from "./config.ts";
-import { resolveDocsURL, resolveIntegrationsURL } from "./docs-url.ts";
-import { fetchSchema } from "./load-schema.ts";
-import { createTools } from "./tools.ts";
-import { SERVER_NAME, SERVER_VERSION } from "./version.ts";
+import { loadConfig } from "#config";
+import { resolveDocsURL, resolveIntegrationsURL } from "#docs-url";
+import { fetchSchema } from "#load-schema";
+import { createTools } from "#tools";
+import { SERVER_NAME, SERVER_VERSION } from "#version";
 
 /** Wrap a tool result object as MCP text content. */
 const asContent = (value: unknown): CallToolResult => ({

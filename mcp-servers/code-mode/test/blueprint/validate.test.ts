@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { validateBlueprint } from "#blueprint-validate";
+import { validateBlueprint } from "#blueprint/validate";
 
 // ---------------------------------------------------------------------------
 // Existing v1 tests (kept; the rewrite must not regress them)

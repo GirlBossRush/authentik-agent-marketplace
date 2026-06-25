@@ -6,7 +6,7 @@ import {
     CURATED_REFS,
     EXCLUDED_SCOPES,
     isDestructiveEntry,
-} from "#blueprint-policy";
+} from "#blueprint/policy";
 
 test("only the three onboarding models are allowed", () => {
     assert.deepEqual([...ALLOWED_MODELS].sort(), [
