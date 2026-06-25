@@ -496,6 +496,24 @@ export function validateBlueprint(content: string): BlueprintValidation {
                     break;
 
                 case "force": {
+                    // A forced attribute must be a plain untagged literal. The
+                    // plain-JSON projection loses tags: an unresolved
+                    // `!KeyOf <id>` projects to the bare string `<id>`, so a
+                    // decoy entry whose `id` equals the forced literal would
+                    // sail past the JSON comparison — yet at apply time
+                    // authentik resolves the reference to a PK, NOT the safe
+                    // forced value. Reject any tag BEFORE the JSON comparison.
+                    const fnode = attrValueNode(
+                        pdoc.contents as Node | null,
+                        i,
+                        key,
+                    );
+                    if (fnode != null && typeof fnode.tag === "string" && fnode.tag !== "") {
+                        violations.push(
+                            `entry ${i}: attribute "${key}" must be a plain untagged literal (a forced/capped attribute may not be a reference), got tag "${fnode.tag}"`,
+                        );
+                        break;
+                    }
                     // Value must deep-equal the policy's required value
                     if (JSON.stringify(val) !== JSON.stringify(rule.value)) {
                         violations.push(
@@ -523,6 +541,22 @@ export function validateBlueprint(content: string): BlueprintValidation {
                 }
 
                 case "cap": {
+                    // Same soundness guard as `force`: a capped attribute must
+                    // be a plain untagged literal, never a reference. The
+                    // plain-JSON projection loses tags, so an unresolved tag
+                    // could project to a value that passes the numeric cap yet
+                    // resolves to something else entirely at apply time.
+                    const cnode = attrValueNode(
+                        pdoc.contents as Node | null,
+                        i,
+                        key,
+                    );
+                    if (cnode != null && typeof cnode.tag === "string" && cnode.tag !== "") {
+                        violations.push(
+                            `entry ${i}: attribute "${key}" must be a plain untagged literal (a forced/capped attribute may not be a reference), got tag "${cnode.tag}"`,
+                        );
+                        break;
+                    }
                     // Value must be a non-negative number ≤ maxSeconds.
                     const maxSec = rule.maxSeconds ?? Infinity;
                     const num = parseTokenDuration(val);

@@ -483,3 +483,56 @@ entries:
     // The flagged redirect_uri is surfaced as a flag, not a violation.
     assert.ok(r.flags.some((f) => f.attr === "redirect_uris"));
 });
+
+// ---------------------------------------------------------------------------
+// FIX C (round 3, Important) — a forced/capped attribute must be a plain
+// untagged literal. The plain-JSON projection (pdoc.toJSON()) loses tags: an
+// unresolved `!KeyOf <id>` projects to the bare string `<id>`. A decoy entry
+// whose `id` equals the forced literal would otherwise let a reference slip
+// through, because at apply time authentik resolves `!KeyOf` to an integer PK —
+// so the field is NOT the forced safe value. Reject any tag on a force/cap attr.
+// ---------------------------------------------------------------------------
+
+test("FIX C: rejects a !KeyOf decoy that projects to the forced sub_mode value", () => {
+    const r = validateBlueprint(`version: 1
+entries:
+  - id: hashed_user_id
+    model: authentik_core.application
+    attrs: {name: a, slug: a}
+  - model: authentik_providers_oauth2.oauth2provider
+    attrs: {name: x, sub_mode: !KeyOf hashed_user_id}`);
+    assert.equal(r.ok, false);
+    assert.match(r.violations.join(" "), /sub_mode|forced|untagged|literal/i);
+});
+
+test("FIX C: rejects a !KeyOf decoy that projects to the forced issuer_mode value", () => {
+    const r = validateBlueprint(`version: 1
+entries:
+  - id: per_provider
+    model: authentik_core.application
+    attrs: {name: a, slug: a}
+  - model: authentik_providers_oauth2.oauth2provider
+    attrs: {name: x, issuer_mode: !KeyOf per_provider}`);
+    assert.equal(r.ok, false);
+    assert.match(r.violations.join(" "), /issuer_mode|forced|untagged|literal/i);
+});
+
+test("FIX C: rejects a tag on a capped attribute (access_token_validity)", () => {
+    const r = validateBlueprint(`version: 1
+entries:
+  - id: "60"
+    model: authentik_core.application
+    attrs: {name: a, slug: a}
+  - model: authentik_providers_oauth2.oauth2provider
+    attrs: {name: x, access_token_validity: !KeyOf "60"}`);
+    assert.equal(r.ok, false);
+    assert.match(r.violations.join(" "), /access_token_validity|forced|capped|untagged|literal/i);
+});
+
+test("FIX C: a plain literal sub_mode still passes (happy path preserved)", () => {
+    const r = validateBlueprint(`version: 1
+entries:
+  - model: authentik_providers_oauth2.oauth2provider
+    attrs: {name: x, sub_mode: hashed_user_id}`);
+    assert.equal(r.ok, true, r.violations.join("; "));
+});
