@@ -27,6 +27,9 @@ export function validateBlueprint(content: string): BlueprintValidation {
 
     let doc: unknown;
     try {
+        // NOTE: yaml.parse only inspects the FIRST YAML document; entries in additional
+        // `---`-separated documents are NOT model/secret-checked. This must move to
+        // parseAllDocuments before v2 (apply) ships.
         doc = parse(content, { logLevel: "silent" });
     } catch (err) {
         return { ok: false, violations: [`unparseable YAML: ${(err as Error).message}`] };

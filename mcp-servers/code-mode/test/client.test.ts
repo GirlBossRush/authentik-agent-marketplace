@@ -49,7 +49,7 @@ test("read-only client rejects a write before any network call", async () => {
     );
     await assert.rejects(
         () => ak.request("POST", "/stages/captcha/", { body: {} }),
-        /writes are disabled/,
+        /writes are not supported/,
     );
 });
 

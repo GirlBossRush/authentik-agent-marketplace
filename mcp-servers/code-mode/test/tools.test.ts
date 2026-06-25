@@ -65,7 +65,7 @@ test("execute blocks writes (read-only binding)", async () => {
             tools.execute({
                 code: `return await ak.request("POST","/stages/captcha/",{body:{}});`,
             }),
-        /writes are disabled/,
+        /writes are not supported/,
     );
 });
 

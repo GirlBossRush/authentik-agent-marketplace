@@ -44,7 +44,7 @@ export function createAk(
         const verb = method.toUpperCase();
         if (!allowWrites && !READ_METHODS.has(verb)) {
             throw new Error(
-                `writes are disabled in this context; use execute_write (attempted ${verb} ${path})`,
+                `writes are not supported (this server is read-only) (attempted ${verb} ${path})`,
             );
         }
         const url = new URL(`${config.baseURL}/api/v3${path}`);
