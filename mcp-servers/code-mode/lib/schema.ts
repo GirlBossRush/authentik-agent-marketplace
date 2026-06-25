@@ -15,7 +15,7 @@ const HTTP_METHODS = [
 export interface OperationHit {
     method: string;
     path: string;
-    operationID?: string;
+    operationId?: string;
     summary?: string;
     tags: string[];
     parameters: NonNullable<OpenAPIV3.OperationObject["parameters"]>;
@@ -61,7 +61,7 @@ export function derefSchema(spec: unknown): unknown {
     return walk(spec);
 }
 
-/** Search operations by free-text query over path + operationID + summary + tags. */
+/** Search operations by free-text query over path + operationId + summary + tags. */
 export function searchOperations(
     spec: OpenAPIV3.Document,
     query: string,
@@ -76,7 +76,7 @@ export function searchOperations(
             if (!op) continue;
             const haystack = [
                 path,
-                op.operationID ?? "",
+                op.operationId ?? "",
                 op.summary ?? "",
                 (op.tags ?? []).join(" "),
             ]
@@ -89,7 +89,7 @@ export function searchOperations(
                 op: {
                     method: method.toUpperCase(),
                     path,
-                    operationID: op.operationID,
+                    operationId: op.operationId,
                     summary: op.summary,
                     tags: op.tags ?? [],
                     parameters: op.parameters ?? [],

@@ -23,7 +23,7 @@ test("PIVOT: discover an endpoint, read data, then validate a proposed blueprint
     // 1. The agent discovers the endpoint.
     const { operations } = tools.search({ query: "create captcha stage" });
     assert.ok(
-        operations.some((o) => o.operationID === "stages_captcha_create"),
+        operations.some((o) => o.operationId === "stages_captcha_create"),
     );
 
     // 2. The agent proposes a blueprint; the validator rejects a non-allow-listed model.
