@@ -4,6 +4,13 @@ import type { AKConfig } from "./config.ts";
 
 const READ_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
+const SECRET_REVEAL = /\/(view_key|view_private_key)\/?$/;
+
+/** Endpoints that return a secret value (token key, private key). Blocked even for reads. */
+export function isSecretRevealPath(path: string): boolean {
+    return SECRET_REVEAL.test(path.split("?")[0]);
+}
+
 export interface AkRequestOptions {
     query?: Record<string, string | number>;
     body?: unknown;
@@ -31,6 +38,9 @@ export function createAk(
         path: string,
         opts: AkRequestOptions = {},
     ): Promise<AkResponse> {
+        if (isSecretRevealPath(path)) {
+            throw new Error(`secret-reveal endpoint blocked: ${path}`);
+        }
         const verb = method.toUpperCase();
         if (!allowWrites && !READ_METHODS.has(verb)) {
             throw new Error(

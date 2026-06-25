@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createServer, type RequestListener } from "node:http";
 import type { AddressInfo } from "node:net";
 
-import { createAk } from "#client";
+import { createAk, isSecretRevealPath } from "#client";
 
 /** Spin up a throwaway HTTP server and run `fn` against its base URL. */
 async function withMock<T>(
@@ -78,4 +78,15 @@ test("write-enabled client sends a POST body", async () => {
             assert.deepEqual(out.data, { pk: 1 });
         },
     );
+});
+
+test("isSecretRevealPath flags token/key reveal endpoints, not normal reads", () => {
+    assert.equal(isSecretRevealPath("/core/tokens/abc/view_key/"), true);
+    assert.equal(isSecretRevealPath("/crypto/certificatekeypairs/x/view_private_key/"), true);
+    assert.equal(isSecretRevealPath("/core/applications/"), false);
+});
+
+test("ak.request refuses secret-reveal paths before any network call", async () => {
+    const ak = createAk({ baseURL: "http://127.0.0.1:1", token: "t" }, { allowWrites: false });
+    await assert.rejects(() => ak.request("GET", "/core/tokens/abc/view_key/"), /secret-reveal/);
 });
