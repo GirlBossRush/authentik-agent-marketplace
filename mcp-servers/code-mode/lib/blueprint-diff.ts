@@ -215,21 +215,6 @@ async function findLiveObject(
     return { kind: "absent" };
 }
 
-/** Compare the entry's attrs against the live object, field by field. */
-function diffAttrs(
-    live: Record<string, unknown>,
-    attrs: Record<string, unknown>,
-): Record<string, { from: unknown; to: unknown }> | undefined {
-    const changed: Record<string, { from: unknown; to: unknown }> = {};
-    for (const [key, to] of Object.entries(attrs)) {
-        const from = live[key];
-        if (!deepEqual(from, to)) {
-            changed[key] = { from, to };
-        }
-    }
-    return Object.keys(changed).length > 0 ? changed : undefined;
-}
-
 /** Structural equality sufficient for blueprint attr values (JSON-shaped). */
 function deepEqual(a: unknown, b: unknown): boolean {
     if (a === b) return true;
@@ -249,6 +234,21 @@ function deepEqual(a: unknown, b: unknown): boolean {
         if (!deepEqual(ao[key], bo[key])) return false;
     }
     return true;
+}
+
+/** Compare the entry's attrs against the live object, field by field. */
+function diffAttrs(
+    live: Record<string, unknown>,
+    attrs: Record<string, unknown>,
+): Record<string, { from: unknown; to: unknown }> | undefined {
+    const changed: Record<string, { from: unknown; to: unknown }> = {};
+    for (const [key, to] of Object.entries(attrs)) {
+        const from = live[key];
+        if (!deepEqual(from, to)) {
+            changed[key] = { from, to };
+        }
+    }
+    return Object.keys(changed).length > 0 ? changed : undefined;
 }
 
 /**

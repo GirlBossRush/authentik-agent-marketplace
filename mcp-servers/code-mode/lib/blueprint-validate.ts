@@ -86,60 +86,6 @@ function collectTaggedRefs(node: Node | null | undefined): {
         return isObject(n) && typeof n.tag === "string" ? n.tag : "";
     }
 
-    function walk(n: Node | null | undefined): void {
-        if (!isNode(n)) return;
-
-        const tag = typeof n.tag === "string" ? n.tag : "";
-
-        if (tag !== "") {
-            if (!PERMITTED_TAGS.has(tag)) {
-                // Default-deny: any unrecognized/unsafe tag is a hard reject.
-                violations.push(
-                    `tag "${tag}" is not permitted (only !Find and !KeyOf are allowed)`,
-                );
-                // Do not recurse into the rejected node — its shape is untrusted.
-                return;
-            }
-
-            if (tag === "!Find") {
-                extractFind(n);
-                // extractFind already validated the shape and recursed where safe.
-                return;
-            }
-
-            if (tag === "!KeyOf") {
-                if (isScalar(n) && typeof n.value === "string") {
-                    refs.push({ tag: "!KeyOf", targetValue: n.value });
-                } else {
-                    violations.push(
-                        "!KeyOf must be a scalar id referencing an entry in this blueprint",
-                    );
-                }
-                return;
-            }
-        }
-
-        recurse(n);
-    }
-
-    function recurse(n: Node): void {
-        if (isMap(n)) {
-            for (const pair of n.items) {
-                if (isPair(pair)) {
-                    walk(pair.key as Node);
-                    walk(pair.value as Node);
-                }
-            }
-        } else if (isSeq(n)) {
-            for (const item of n.items) {
-                walk(item as Node);
-            }
-        } else if (isPair(n)) {
-            walk(n.key as Node);
-            walk(n.value as Node);
-        }
-    }
-
     /**
      * Validate and extract a !Find node. The ONLY understood shape mirrors
      * authentik's `Find.__init__`:
@@ -191,14 +137,18 @@ function collectTaggedRefs(node: Node | null | undefined): {
                 violations.push(
                     "!Find condition must be a [field, value] sequence",
                 );
+
                 return;
             }
+
             if (cond.items.length !== 2) {
                 violations.push(
                     "!Find condition must be exactly [field, value]",
                 );
+
                 return;
             }
+
             const fieldNode = cond.items[0];
             const valNode = cond.items[1];
             // Default-deny tags on BOTH items of the condition (field + value).
@@ -206,31 +156,96 @@ function collectTaggedRefs(node: Node | null | undefined): {
                 violations.push(
                     `!Find condition field must be a plain untagged scalar, got tag "${nodeTag(fieldNode)}"`,
                 );
+
                 return;
             }
+
             if (nodeTag(valNode) !== "") {
                 violations.push(
                     `!Find condition value must be a plain untagged scalar, got tag "${nodeTag(valNode)}"`,
                 );
+
                 return;
             }
+
             if (!(isScalar(fieldNode) && typeof fieldNode.value === "string")) {
                 violations.push(
                     "!Find condition field must be a scalar string",
                 );
+
                 return;
             }
+
             if (!isScalar(valNode)) {
                 violations.push("!Find condition value must be a scalar");
                 return;
             }
+
             if (typeof valNode.value !== "string") {
                 violations.push(
                     "!Find condition value must be a scalar string",
                 );
+
                 return;
             }
             refs.push({ tag: "!Find", targetValue: valNode.value });
+        }
+    }
+
+    function walk(n: Node | null | undefined): void {
+        if (!isNode(n)) return;
+
+        const tag = typeof n.tag === "string" ? n.tag : "";
+
+        if (tag !== "") {
+            if (!PERMITTED_TAGS.has(tag)) {
+                // Default-deny: any unrecognized/unsafe tag is a hard reject.
+                violations.push(
+                    `tag "${tag}" is not permitted (only !Find and !KeyOf are allowed)`,
+                );
+                // Do not recurse into the rejected node — its shape is untrusted.
+                return;
+            }
+
+            if (tag === "!Find") {
+                extractFind(n);
+                // extractFind already validated the shape and recursed where safe.
+                return;
+            }
+
+            if (tag === "!KeyOf") {
+                if (isScalar(n) && typeof n.value === "string") {
+                    refs.push({ tag: "!KeyOf", targetValue: n.value });
+                } else {
+                    violations.push(
+                        "!KeyOf must be a scalar id referencing an entry in this blueprint",
+                    );
+                }
+                return;
+            }
+        }
+
+        // walk and recurse are mutually recursive; function declarations hoist,
+        // so this call is safe at runtime regardless of textual order.
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        recurse(n);
+    }
+
+    function recurse(n: Node): void {
+        if (isMap(n)) {
+            for (const pair of n.items) {
+                if (isPair(pair)) {
+                    walk(pair.key as Node);
+                    walk(pair.value as Node);
+                }
+            }
+        } else if (isSeq(n)) {
+            for (const item of n.items) {
+                walk(item as Node);
+            }
+        } else if (isPair(n)) {
+            walk(n.key as Node);
+            walk(n.value as Node);
         }
     }
 
@@ -376,6 +391,61 @@ function checkRefAttr(node: Node | null): string | null {
     }
     // Untagged scalar / map → a plain literal, rejected.
     return "must be a permitted reference (a curated !Find or an in-blueprint !KeyOf), not a plain literal";
+}
+
+// #endregion
+
+// #region Helpers
+
+/**
+ * Parse an authentik token validity value, which can be:
+ * - a number (seconds)
+ * - a string like "hours=1" or "seconds=3600"
+ *
+ * Returns the number of seconds, or null if unparseable.
+ */
+function parseTokenDuration(val: unknown): number | null {
+    if (typeof val === "number") return val;
+    if (typeof val === "string") {
+        // authentik accepts timedelta strings like "hours=1;minutes=30"
+        const match = /^(\d+)$/.exec(val.trim());
+        if (match) return parseInt(match[1]!, 10);
+
+        // Parse "key=value;key=value" style. Any unrecognized unit (or any
+        // unparseable part) rejects the whole value — never silently ignore.
+        let total = 0;
+        let parsed = false;
+        for (const part of val.split(";")) {
+            if (part.trim() === "") continue; // tolerate trailing/empty segments
+            const kv = /^\s*(\w+)\s*=\s*(\d+)\s*$/.exec(part.trim());
+            if (!kv) return null;
+            const [, unit, amount] = kv;
+            parsed = true;
+            const n = parseInt(amount!, 10);
+            switch (unit) {
+                case "seconds":
+                    total += n;
+                    break;
+                case "minutes":
+                    total += n * 60;
+                    break;
+                case "hours":
+                    total += n * 3600;
+                    break;
+                case "days":
+                    total += n * 86400;
+                    break;
+                case "weeks":
+                    total += n * 604800;
+                    break;
+                default:
+                    return null; // unknown unit → reject
+            }
+        }
+
+        return parsed ? total : null;
+    }
+    return null;
 }
 
 // #endregion
@@ -626,61 +696,6 @@ export function validateBlueprint(content: string): BlueprintValidation {
     }
 
     return { ok: violations.length === 0, violations, flags };
-}
-
-// #endregion
-
-// #region Helpers
-
-/**
- * Parse an authentik token validity value, which can be:
- * - a number (seconds)
- * - a string like "hours=1" or "seconds=3600"
- *
- * Returns the number of seconds, or null if unparseable.
- */
-function parseTokenDuration(val: unknown): number | null {
-    if (typeof val === "number") return val;
-    if (typeof val === "string") {
-        // authentik accepts timedelta strings like "hours=1;minutes=30"
-        const match = /^(\d+)$/.exec(val.trim());
-        if (match) return parseInt(match[1]!, 10);
-
-        // Parse "key=value;key=value" style. Any unrecognized unit (or any
-        // unparseable part) rejects the whole value — never silently ignore.
-        let total = 0;
-        let parsed = false;
-        for (const part of val.split(";")) {
-            if (part.trim() === "") continue; // tolerate trailing/empty segments
-            const kv = /^\s*(\w+)\s*=\s*(\d+)\s*$/.exec(part.trim());
-            if (!kv) return null;
-            const [, unit, amount] = kv;
-            parsed = true;
-            const n = parseInt(amount!, 10);
-            switch (unit) {
-                case "seconds":
-                    total += n;
-                    break;
-                case "minutes":
-                    total += n * 60;
-                    break;
-                case "hours":
-                    total += n * 3600;
-                    break;
-                case "days":
-                    total += n * 86400;
-                    break;
-                case "weeks":
-                    total += n * 604800;
-                    break;
-                default:
-                    return null; // unknown unit → reject
-            }
-        }
-
-        return parsed ? total : null;
-    }
-    return null;
 }
 
 // #endregion
