@@ -12,13 +12,20 @@ test("loadConfig reads and normalizes env", () => {
     assert.equal(cfg.token, "ak-tok");
 });
 
-test("loadConfig throws when URL missing", () => {
-    assert.throws(() => loadConfig({ AUTHENTIK_TOKEN: "x" }), /AUTHENTIK_URL/);
-});
 
 test("loadConfig throws when token missing", () => {
     assert.throws(
         () => loadConfig({ AUTHENTIK_URL: "https://id.example.com" }),
         /AUTHENTIK_TOKEN/,
     );
+});
+
+test("loadConfig defaults AUTHENTIK_URL to localhost:9000 when unset", () => {
+    const cfg = loadConfig({ AUTHENTIK_TOKEN: "t" });
+    assert.equal(cfg.baseURL, "http://localhost:9000");
+    assert.equal(cfg.token, "t");
+});
+
+test("loadConfig still requires a token", () => {
+    assert.throws(() => loadConfig({ AUTHENTIK_URL: "http://localhost:9000" }), /AUTHENTIK_TOKEN/);
 });

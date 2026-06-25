@@ -7,13 +7,11 @@ export interface AKConfig {
     token: string;
 }
 
+const DEFAULT_URL = "http://localhost:9000";
+
 export function loadConfig(env: Record<string, string | undefined>): AKConfig {
-    const url = env.AUTHENTIK_URL?.trim();
+    const url = env.AUTHENTIK_URL?.trim() || DEFAULT_URL;
     const token = env.AUTHENTIK_TOKEN?.trim();
-    if (!url)
-        throw new Error(
-            "AUTHENTIK_URL is required (e.g. https://id.example.com)",
-        );
     if (!token)
         throw new Error("AUTHENTIK_TOKEN is required (an authentik API token)");
     return { baseURL: url.replace(/\/+$/, ""), token };
