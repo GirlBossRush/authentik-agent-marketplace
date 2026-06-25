@@ -69,6 +69,13 @@ async function main(): Promise<void> {
         async (args) => asContent(tools.validate(args)),
     );
 
+    tool<{ content: string }>(
+        "prepare_apply",
+        "Validate a proposed authentik Blueprint and PREPARE it for the operator to apply: returns a trusted diff, an undo snapshot, irreversible-op flags, and the exact `ak apply_blueprint` command. This server never applies changes itself.",
+        { content: z.string() },
+        async (args) => asContent(await tools.prepare(args)),
+    );
+
     tool<Record<string, never>>(
         "docs",
         "Return the authentik documentation base URLs for THIS instance (version-aware). Prefer these over any hardcoded docs URL: fetch `<docsURL>/llms.txt` (or `<integrationsURL>/llms.txt`), follow the index to the relevant page, then fetch its `.md`.",

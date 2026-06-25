@@ -87,3 +87,54 @@ test("tools expose validate and no longer expose executeWrite", () => {
         true,
     );
 });
+
+test("tools.prepare exists and prepares a valid blueprint", async () => {
+    const tools = createTools({
+        spec: SPEC,
+        config: { baseURL: "http://x", token: "t" },
+    });
+    assert.equal(typeof tools.prepare, "function");
+    const result = await tools.prepare({ content: "version: 1\nentries: []" });
+    assert.equal(result.ok, true);
+    assert.equal(result.applyCommand, "ak apply_blueprint <file>");
+});
+
+test("tools.prepare calls through to a READ-ONLY ak (writes blocked)", async () => {
+    // A blueprint entry that touches a non-denied model forces the prepare
+    // pipeline to issue an ak request when computing the diff/undo. The
+    // read-only client only permits GET/HEAD/OPTIONS, so we assert the mock
+    // server only ever received read-method requests.
+    const methods: string[] = [];
+    await withMock(
+        (req, res) => {
+            methods.push(req.method ?? "");
+            res.end(JSON.stringify({ results: [] }));
+        },
+        async (baseURL) => {
+            const tools = createTools({
+                spec: SPEC,
+                config: { baseURL, token: "t" },
+            });
+            const blueprint = [
+                "version: 1",
+                "entries:",
+                "  - model: authentik_core.application",
+                "    identifiers:",
+                "      slug: test-app",
+                "    attrs:",
+                "      name: Test App",
+                "      slug: test-app",
+            ].join("\n");
+            const result = await tools.prepare({ content: blueprint });
+            assert.equal(result.ok, true);
+        },
+    );
+    // The prepare pipeline must only ever read — never write — through ak.
+    assert.ok(methods.length > 0, "expected prepare to issue ak reads");
+    for (const m of methods) {
+        assert.ok(
+            ["GET", "HEAD", "OPTIONS"].includes(m),
+            `prepare issued a non-read method: ${m}`,
+        );
+    }
+});

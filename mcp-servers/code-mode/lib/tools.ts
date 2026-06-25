@@ -1,4 +1,4 @@
-/** @file The three code-mode tools: search, execute, validate. */
+/** @file The code-mode tools: search, execute, validate, prepare. */
 
 import type { OpenAPIV3 } from "openapi-types";
 
@@ -6,6 +6,7 @@ import {
     validateBlueprint,
     type BlueprintValidation,
 } from "./blueprint-validate.ts";
+import { prepareApply, type PrepareResult } from "#blueprint-prepare";
 import { createAk } from "./client.ts";
 import type { AKConfig } from "./config.ts";
 import { runInSandbox, type SandboxResult } from "./sandbox.ts";
@@ -39,5 +40,11 @@ export function createTools({ spec, config }: CreateToolsDeps) {
     const validate = ({ content }: { content: string }): BlueprintValidation =>
         validateBlueprint(content);
 
-    return { search, execute, validate };
+    // Propose-only: prepare runs the read-only pipeline (validate + diff + undo
+    // + flags + apply command). The MCP never holds a write/apply credential, so
+    // the diff/undo reads go through a read-only ak (allowWrites: false).
+    const prepare = ({ content }: { content: string }): Promise<PrepareResult> =>
+        prepareApply(content, createAk(config, { allowWrites: false }));
+
+    return { search, execute, validate, prepare };
 }
