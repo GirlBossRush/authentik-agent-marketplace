@@ -3,15 +3,16 @@
  *
  * Both readers answer the same question — "does the object this entry would
  * touch already exist live, and what are its current field values?" — by GETting
- * the model's list endpoint and matching on the entry's identifiers. This module
- * is the single source of that logic (the model→endpoint map, the DRF response
- * shape handling, and the existence classification) so diff and undo can't drift
- * apart.
+ * the model's list endpoint (from the `MODEL_LIST` registry in `policy.ts`) and
+ * matching on the entry's identifiers. This module is the single source of that
+ * read logic (the DRF response-shape handling and the existence classification)
+ * so diff and undo can't drift apart.
  *
  * Reads only: every call goes through the `Ak` read client as a GET. The client
  * already blocks writes and secret-reveal paths.
  */
 
+import { MODEL_LIST } from "#blueprint/policy";
 import { isObject } from "#predicates";
 import type { Ak } from "#client";
 
@@ -44,43 +45,6 @@ export type LookupResult =
     | { kind: "found"; live: Record<string, unknown> }
     | { kind: "absent" }
     | { kind: "unconfirmed" };
-
-/**
- * Maps a blueprint model to its read-only list endpoint and the query
- * parameters the endpoint accepts as exact filters. Identifiers not listed here
- * fall back to client-side matching against the returned results.
- */
-const MODEL_LIST: Readonly<
-    Record<
-        string,
-        {
-            path: string;
-            filterParams: readonly string[];
-            /**
-             * When the endpoint exposes no exact identifier filter, matching is
-             * client-side over a single fetched page. Request the largest page
-             * the API allows so the match window is as wide as possible.
-             */
-            wideFetch?: boolean;
-        }
-    >
-> = {
-    "authentik_core.application": {
-        path: "/core/applications/",
-        filterParams: ["slug"],
-    },
-    "authentik_providers_oauth2.oauth2provider": {
-        path: "/providers/oauth2/",
-        // No exact `name` filter exposed; match client-side on the results.
-        filterParams: [],
-        wideFetch: true,
-    },
-    "authentik_providers_saml.samlprovider": {
-        path: "/providers/saml/",
-        filterParams: [],
-        wideFetch: true,
-    },
-};
 
 /** The largest page size authentik's DRF list endpoints accept. */
 const MAX_PAGE_SIZE = 100;

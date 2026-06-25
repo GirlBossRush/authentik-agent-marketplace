@@ -54,7 +54,7 @@ The source runs as `.ts` directly under Node's native type stripping, so there i
 
 - **Server core:** `index.ts` (entry + MCP tool registration), `tools.ts` (wires the five tools), `config.ts`, `version.ts`.
 - **Read runtime** (the `search`/`execute` half): `client.ts` (the read-only `ak.request`), `sandbox.ts` (the `vm` code sandbox), `schema.ts` (operation search + `$ref` deref), `load-schema.ts` (startup schema fetch), `docs-url.ts` (version-aware docs URLs).
-- **`blueprint/`** (the `validate`/`prepare` half): `policy.ts` (allow-list data), `validate.ts` (the orchestrator) with its helpers `tags.ts` (default-deny YAML-tag walk), `refs.ts` (reference curation), and `duration.ts` (token-validity parsing); `diff.ts` + `undo.ts` (the operator handoff) over a shared `live-lookup.ts`; and `prepare.ts` (ties validate + diff + undo into the handoff).
+- **`blueprint/`** (the `validate`/`prepare` half): `policy.ts` (the model registry — each supported model's rules **and** read endpoint in one place, plus curated refs), `validate.ts` (the orchestrator) with its helpers `tags.ts` (default-deny YAML-tag walk), `refs.ts` (reference curation), and `duration.ts` (token-validity parsing); `diff.ts` + `undo.ts` (the operator handoff) over a shared `live-lookup.ts`; and `prepare.ts` (ties validate + diff + undo into the handoff).
 - `predicates.ts`: shared type-guards.
 
 `test/` mirrors this tree (`test/blueprint/` for the subsystem). See the server's `README.md` for the security model and `docs/agent-security-model.md` for the threat model.

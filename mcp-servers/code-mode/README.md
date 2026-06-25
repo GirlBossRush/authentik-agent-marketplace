@@ -29,7 +29,7 @@ lib/
   docs-url.ts       resolve version-aware docs base URLs
   # blueprint subsystem (the validate / prepare half)
   blueprint/
-    policy.ts       allow-list data: models, per-attr rules, curated refs
+    policy.ts       model registry: each model's rules + read endpoint; curated refs
     validate.ts     the policy-enforcement orchestrator…
     tags.ts         …default-deny YAML-tag walk
     refs.ts         …reference curation

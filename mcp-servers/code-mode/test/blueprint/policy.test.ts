@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
     ALLOWED_MODELS,
     MODEL_ATTRS,
+    MODEL_LIST,
     CURATED_REFS,
     EXCLUDED_SCOPES,
     isDestructiveEntry,
@@ -14,6 +15,16 @@ test("only the three onboarding models are allowed", () => {
         "authentik_providers_oauth2.oauth2provider",
         "authentik_providers_saml.samlprovider",
     ]);
+});
+
+test("the rules, endpoints, and allow-list cover the same models (no drift)", () => {
+    const models = [...ALLOWED_MODELS].sort();
+    assert.deepEqual(Object.keys(MODEL_ATTRS).sort(), models);
+    assert.deepEqual(Object.keys(MODEL_LIST).sort(), models);
+
+    for (const model of models) {
+        assert.ok(MODEL_LIST[model]?.path, `${model} declares a list path`);
+    }
 });
 
 test("curated scopes include the standard four and EXCLUDE authentik_api", () => {
